@@ -1,0 +1,2518 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Meeting History | MeetMind AI</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+
+        /* ==============================
+           GLOBAL
+        ============================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+
+            --bg: #f5f7fb;
+            --card: #ffffff;
+            --text: #172033;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+
+            --sidebar: #111827;
+            --sidebar-active: #1f2937;
+            --sidebar-text: #9ca3af;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        button,
+        input,
+        select {
+            font-family: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+
+        /* ==============================
+           APP
+        ============================== */
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+
+        /* ==============================
+           SIDEBAR
+        ============================== */
+
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar);
+            color: white;
+
+            padding: 24px 16px;
+
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            padding: 0 10px 30px;
+        }
+
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 12px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6366f1,
+                    #8b5cf6
+                );
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 19px;
+        }
+
+        .brand-text h2 {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .brand-text span {
+            font-size: 10px;
+            color: #9ca3af;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 700;
+
+            color: #6b7280;
+
+            text-transform: uppercase;
+            letter-spacing: 1px;
+
+            padding: 15px 12px 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            color: var(--sidebar-text);
+
+            padding: 12px;
+
+            border-radius: 10px;
+
+            margin-bottom: 4px;
+
+            font-size: 14px;
+
+            transition: 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background: var(--sidebar-active);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: var(--sidebar-active);
+            color: white;
+
+            border-left: 3px solid var(--primary);
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+
+        /* ==============================
+           MAIN
+        ============================== */
+
+        .main {
+            margin-left: 260px;
+
+            width: calc(100% - 260px);
+        }
+
+
+        /* ==============================
+           TOP BAR
+        ============================== */
+
+        .topbar {
+            height: 76px;
+
+            background: white;
+
+            border-bottom: 1px solid var(--border);
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 35px;
+
+            position: sticky;
+            top: 0;
+
+            z-index: 50;
+        }
+
+        .page-title h1 {
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+        .page-title p {
+            color: var(--muted);
+            font-size: 12px;
+
+            margin-top: 4px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+
+            background: white;
+
+            border: 1px solid var(--border);
+
+            border-radius: 10px;
+
+            color: #4b5563;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+
+            border-radius: 50%;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6366f1,
+                    #8b5cf6
+                );
+
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+
+        /* ==============================
+           CONTENT
+        ============================== */
+
+        .content {
+            padding: 32px;
+
+            max-width: 1500px;
+
+            margin: auto;
+        }
+
+        .page-intro {
+            margin-bottom: 25px;
+        }
+
+        .page-intro h2 {
+            font-size: 26px;
+
+            margin-bottom: 7px;
+        }
+
+        .page-intro p {
+            color: var(--muted);
+
+            font-size: 14px;
+        }
+
+
+        /* ==============================
+           STATISTICS
+        ============================== */
+
+        .stats-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 16px;
+
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+
+            border: 1px solid var(--border);
+
+            border-radius: 15px;
+
+            padding: 18px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+        }
+
+        .stat-icon {
+            width: 43px;
+            height: 43px;
+
+            border-radius: 11px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #eef2ff;
+
+            color: var(--primary);
+        }
+
+        .stat-info span {
+            display: block;
+
+            color: var(--muted);
+
+            font-size: 11px;
+
+            margin-bottom: 5px;
+        }
+
+        .stat-info strong {
+            font-size: 20px;
+        }
+
+
+        /* ==============================
+           TOOLBAR
+        ============================== */
+
+        .toolbar {
+            background: white;
+
+            border: 1px solid var(--border);
+
+            border-radius: 15px;
+
+            padding: 17px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            position: relative;
+
+            flex: 1;
+
+            max-width: 420px;
+        }
+
+        .search-box i {
+            position: absolute;
+
+            left: 14px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: #9ca3af;
+
+            font-size: 13px;
+        }
+
+        .search-box input {
+            width: 100%;
+
+            height: 42px;
+
+            border: 1px solid var(--border);
+
+            border-radius: 10px;
+
+            padding: 0 14px 0 40px;
+
+            outline: none;
+
+            font-size: 13px;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(99, 102, 241, 0.08);
+        }
+
+        .filters {
+            display: flex;
+
+            gap: 10px;
+        }
+
+        .filter-select {
+            height: 42px;
+
+            padding: 0 12px;
+
+            border: 1px solid var(--border);
+
+            border-radius: 10px;
+
+            background: white;
+
+            outline: none;
+
+            font-size: 12px;
+
+            color: #4b5563;
+        }
+
+        .new-meeting-btn {
+            height: 42px;
+
+            padding: 0 17px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--secondary)
+                );
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+
+        /* ==============================
+           HISTORY CARD
+        ============================== */
+
+        .history-card {
+            background: white;
+
+            border: 1px solid var(--border);
+
+            border-radius: 17px;
+
+            overflow: hidden;
+        }
+
+        .history-header {
+            padding: 20px 22px;
+
+            border-bottom: 1px solid var(--border);
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+        }
+
+        .history-header h3 {
+            font-size: 16px;
+        }
+
+        .history-header span {
+            color: var(--muted);
+
+            font-size: 11px;
+        }
+
+
+        /* ==============================
+           TABLE
+        ============================== */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 850px;
+        }
+
+        thead {
+            background: #f8fafc;
+        }
+
+        th {
+            padding: 13px 20px;
+
+            text-align: left;
+
+            color: #6b7280;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 16px 20px;
+
+            border-top: 1px solid #f0f1f3;
+
+            font-size: 12px;
+        }
+
+        tbody tr {
+            transition: 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #fafaff;
+        }
+
+
+        /* ==============================
+           MEETING INFO
+        ============================== */
+
+        .meeting-info {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+        .meeting-icon {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 11px;
+
+            background: #eef2ff;
+
+            color: var(--primary);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+        }
+
+        .meeting-name {
+            font-weight: 700;
+
+            color: var(--text);
+
+            margin-bottom: 4px;
+        }
+
+        .meeting-type {
+            color: var(--muted);
+
+            font-size: 10px;
+        }
+
+
+        /* ==============================
+           STATUS
+        ============================== */
+
+        .status {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 5px 9px;
+
+            border-radius: 20px;
+
+            font-size: 10px;
+
+            font-weight: 700;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+        }
+
+        .status.completed {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .status.completed .status-dot {
+            background: #10b981;
+        }
+
+        .status.processing {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .status.processing .status-dot {
+            background: #f59e0b;
+        }
+
+        .status.failed {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        .status.failed .status-dot {
+            background: #ef4444;
+        }
+
+
+        /* ==============================
+           PARTICIPANTS
+        ============================== */
+
+        .participants {
+            display: flex;
+
+            align-items: center;
+        }
+
+        .participant {
+            width: 27px;
+            height: 27px;
+
+            border-radius: 50%;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6366f1,
+                    #8b5cf6
+                );
+
+            border: 2px solid white;
+
+            margin-left: -6px;
+
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 8px;
+
+            font-weight: 700;
+        }
+
+        .participant:first-child {
+            margin-left: 0;
+        }
+
+        .participant.more {
+            background: #e5e7eb;
+
+            color: #4b5563;
+        }
+
+
+        /* ==============================
+           ACTIONS
+        ============================== */
+
+        .actions {
+            display: flex;
+
+            gap: 7px;
+        }
+
+        .action-btn {
+            width: 33px;
+            height: 33px;
+
+            border: 1px solid var(--border);
+
+            background: white;
+
+            border-radius: 8px;
+
+            color: #6b7280;
+
+            transition: 0.2s ease;
+        }
+
+        .action-btn:hover {
+            color: var(--primary);
+
+            border-color: #c7d2fe;
+
+            background: #f8faff;
+        }
+
+        .action-btn.delete:hover {
+            color: var(--danger);
+
+            border-color: #fecaca;
+
+            background: #fef2f2;
+        }
+
+
+        /* ==============================
+           EMPTY STATE
+        ============================== */
+
+        .empty-state {
+            display: none;
+
+            text-align: center;
+
+            padding: 70px 20px;
+        }
+
+        .empty-icon {
+            width: 70px;
+            height: 70px;
+
+            border-radius: 20px;
+
+            background: #eef2ff;
+
+            color: var(--primary);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin: 0 auto 18px;
+
+            font-size: 27px;
+        }
+
+        .empty-state h3 {
+            font-size: 17px;
+
+            margin-bottom: 7px;
+        }
+
+        .empty-state p {
+            color: var(--muted);
+
+            font-size: 12px;
+
+            margin-bottom: 20px;
+        }
+
+
+        /* ==============================
+           PAGINATION
+        ============================== */
+
+        .pagination {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding: 17px 20px;
+
+            border-top: 1px solid var(--border);
+        }
+
+        .pagination-info {
+            color: var(--muted);
+
+            font-size: 11px;
+        }
+
+        .pagination-buttons {
+            display: flex;
+
+            gap: 5px;
+        }
+
+        .page-btn {
+            width: 32px;
+            height: 32px;
+
+            border: 1px solid var(--border);
+
+            background: white;
+
+            border-radius: 7px;
+
+            font-size: 11px;
+
+            color: #6b7280;
+        }
+
+        .page-btn.active {
+            background: var(--primary);
+
+            color: white;
+
+            border-color: var(--primary);
+        }
+
+
+        /* ==============================
+           FOOTER
+        ============================== */
+
+        .footer {
+            text-align: center;
+
+            padding: 25px;
+
+            color: #9ca3af;
+
+            font-size: 11px;
+        }
+
+
+        /* ==============================
+           TOAST
+        ============================== */
+
+        .toast {
+            position: fixed;
+
+            right: 25px;
+            bottom: 25px;
+
+            background: #111827;
+
+            color: white;
+
+            padding: 13px 17px;
+
+            border-radius: 10px;
+
+            font-size: 12px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            opacity: 0;
+
+            transform: translateY(20px);
+
+            pointer-events: none;
+
+            transition: 0.3s ease;
+
+            z-index: 500;
+        }
+
+        .toast.show {
+            opacity: 1;
+
+            transform: translateY(0);
+        }
+
+
+        /* ==============================
+           RESPONSIVE
+        ============================== */
+
+        @media (max-width: 1100px) {
+
+            .sidebar {
+                width: 220px;
+            }
+
+            .main {
+                margin-left: 220px;
+
+                width: calc(100% - 220px);
+            }
+
+            .stats-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .toolbar {
+                flex-wrap: wrap;
+            }
+
+            .search-box {
+                max-width: 100%;
+                flex-basis: 100%;
+            }
+        }
+
+
+        @media (max-width: 768px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+
+                transition: 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+
+                width: 100%;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .topbar {
+                padding: 0 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                width: 100%;
+            }
+
+            .filter-select {
+                flex: 1;
+            }
+
+            .new-meeting-btn {
+                width: 100%;
+
+                justify-content: center;
+            }
+
+            .pagination {
+                flex-direction: column;
+
+                gap: 12px;
+            }
+        }
+
+
+        @media (max-width: 500px) {
+
+            .content {
+                padding: 15px;
+            }
+
+            .page-intro h2 {
+                font-size: 22px;
+            }
+
+            .top-actions .icon-btn {
+                display: none;
+            }
+
+            .history-header {
+                padding: 16px;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+    <!-- =====================================
+         SIDEBAR
+    ====================================== -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-logo">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+
+            <div class="brand-text">
+                <h2>MeetMind AI</h2>
+                <span>Meeting Intelligence</span>
+            </div>
+
+        </div>
+
+
+        <div class="nav-label">
+            Workspace
+        </div>
+
+
+        <a href="index.html" class="nav-item">
+
+            <i class="fa-solid fa-chart-pie"></i>
+
+            <span>Dashboard</span>
+
+        </a>
+
+
+        <a href="meeting.html" class="nav-item">
+
+            <i class="fa-solid fa-plus"></i>
+
+            <span>New Meeting</span>
+
+        </a>
+
+
+        <a href="history.html" class="nav-item active">
+
+            <i class="fa-solid fa-clock-rotate-left"></i>
+
+            <span>Meeting History</span>
+
+        </a>
+
+
+        <a href="#" class="nav-item">
+
+            <i class="fa-solid fa-chart-line"></i>
+
+            <span>Analytics</span>
+
+        </a>
+
+
+        <div class="nav-label">
+            Management
+        </div>
+
+
+        <a href="#" class="nav-item">
+
+            <i class="fa-solid fa-list-check"></i>
+
+            <span>Action Items</span>
+
+        </a>
+
+
+        <a href="#" class="nav-item">
+
+            <i class="fa-solid fa-file-lines"></i>
+
+            <span>Documents</span>
+
+        </a>
+
+
+        <a href="#" class="nav-item">
+
+            <i class="fa-solid fa-gear"></i>
+
+            <span>Settings</span>
+
+        </a>
+
+    </aside>
+
+
+
+    <!-- =====================================
+         MAIN
+    ====================================== -->
+
+    <main class="main">
+
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div class="page-title">
+
+                <h1>Meeting History</h1>
+
+                <p>
+                    View and manage your previous meetings
+                </p>
+
+            </div>
+
+
+            <div class="top-actions">
+
+                <button class="icon-btn">
+
+                    <i class="fa-regular fa-bell"></i>
+
+                </button>
+
+
+                <div class="avatar">
+                    RV
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- CONTENT -->
+
+        <section class="content">
+
+
+            <div class="page-intro">
+
+                <h2>Your Meeting History</h2>
+
+                <p>
+                    Access transcripts, summaries, decisions and
+                    action items from your previous meetings.
+                </p>
+
+            </div>
+
+
+
+            <!-- =================================
+                 STATISTICS
+            ================================== -->
+
+            <div class="stats-grid">
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+
+                        <i class="fa-solid fa-calendar-days"></i>
+
+                    </div>
+
+                    <div class="stat-info">
+
+                        <span>Total Meetings</span>
+
+                        <strong>24</strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+
+                        <i class="fa-solid fa-clock"></i>
+
+                    </div>
+
+                    <div class="stat-info">
+
+                        <span>Total Hours</span>
+
+                        <strong>38.5</strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+
+                        <i class="fa-solid fa-file-lines"></i>
+
+                    </div>
+
+                    <div class="stat-info">
+
+                        <span>Minutes Generated</span>
+
+                        <strong>22</strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+
+                        <i class="fa-solid fa-list-check"></i>
+
+                    </div>
+
+                    <div class="stat-info">
+
+                        <span>Action Items</span>
+
+                        <strong>87</strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================
+                 TOOLBAR
+            ================================== -->
+
+            <div class="toolbar">
+
+
+                <div class="search-box">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Search meetings..."
+                    >
+
+                </div>
+
+
+                <div class="filters">
+
+                    <select
+                        class="filter-select"
+                        id="typeFilter"
+                    >
+
+                        <option value="all">
+                            All Types
+                        </option>
+
+                        <option value="project">
+                            Project Meeting
+                        </option>
+
+                        <option value="team">
+                            Team Meeting
+                        </option>
+
+                        <option value="client">
+                            Client Meeting
+                        </option>
+
+                        <option value="academic">
+                            Academic Meeting
+                        </option>
+
+                    </select>
+
+
+                    <select
+                        class="filter-select"
+                        id="statusFilter"
+                    >
+
+                        <option value="all">
+                            All Status
+                        </option>
+
+                        <option value="completed">
+                            Completed
+                        </option>
+
+                        <option value="processing">
+                            Processing
+                        </option>
+
+                        <option value="failed">
+                            Failed
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <button
+                    class="new-meeting-btn"
+                    onclick="window.location.href='meeting.html'"
+                >
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    New Meeting
+
+                </button>
+
+            </div>
+
+
+
+            <!-- =================================
+                 HISTORY TABLE
+            ================================== -->
+
+            <div class="history-card">
+
+
+                <div class="history-header">
+
+                    <div>
+
+                        <h3>
+                            Recent Meetings
+                        </h3>
+
+                    </div>
+
+                    <span id="meetingCount">
+                        6 meetings
+                    </span>
+
+                </div>
+
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Meeting
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Participants
+                                </th>
+
+                                <th>
+                                    Duration
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="meetingTable">
+
+
+                            <!-- MEETING 1 -->
+
+                            <tr
+                                data-name="Final Year Project Review"
+                                data-type="project"
+                                data-status="completed"
+                            >
+
+                                <td>
+
+                                    <div class="meeting-info">
+
+                                        <div class="meeting-icon">
+
+                                            <i class="fa-solid fa-laptop-code"></i>
+
+                                        </div>
+
+                                        <div>
+
+                                            <div class="meeting-name">
+                                                Final Year Project Review
+                                            </div>
+
+                                            <div class="meeting-type">
+                                                Project Meeting
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    Oct 04, 2026
+                                </td>
+
+
+                                <td>
+
+                                    <div class="participants">
+
+                                        <div class="participant">
+                                            RV
+                                        </div>
+
+                                        <div class="participant">
+                                            AK
+                                        </div>
+
+                                        <div class="participant">
+                                            PS
+                                        </div>
+
+                                        <div class="participant more">
+                                            +2
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    52 min
+                                </td>
+
+
+                                <td>
+
+                                    <span class="status completed">
+
+                                        <span class="status-dot"></span>
+
+                                        Completed
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="actions">
+
+                                        <button
+                                            class="action-btn"
+                                            title="View"
+                                            onclick="viewMeeting('Final Year Project Review')"
+                                        >
+
+                                            <i class="fa-regular fa-eye"></i>
+
+                                        </button>
+
+
+                                        <button
+                                            class="action-btn"
+                                            title="Download"
+                                            onclick="downloadMeeting('Final Year Project Review')"
+                                        >
+
+                                            <i class="fa-solid fa-download"></i>
+
+                                        </button>
+
+
+                                        <button
+                                            class="action-btn delete"
+                                            title="Delete"
+                                            onclick="deleteMeeting(this)"
+                                        >
+
+                                            <i class="fa-regular fa-trash-can"></i>
+
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+
+                            <!-- MEETING 2 -->
+
+                            <tr
+                                data-name="AI Project Team Discussion"
+                                data-type="team"
+                                data-status="completed"
+                            >
+
+                                <td>
+
+                                    <div class="meeting-info">
+
+                                        <div class="meeting-icon">
+
+                                            <i class="fa-solid fa-users"></i>
+
+                                        </div>
+
+                                        <div>
+
+                                            <div class="meeting-name">
+                                                AI Project Team Discussion
+                                            </div>
+
+                                            <div class="meeting-type">
+                                                Team Meeting
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    Oct 02, 2026
+                                </td>
+
+
+                                <td>
+
+                                    <div class="participants">
+
+                                        <div class="participant">
+                                            RV
+                                        </div>
+
+                                        <div class="participant">
+                                            SK
+                                        </div>
+
+                                        <div class="participant">
+                                            AR
+                                        </div>
+
+                                        <div class="participant more">
+                                            +3
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    41 min
+                                </td>
+
+
+                                <td>
+
+                                    <span class="status completed">
+
+                                        <span class="status-dot"></span>
+
+                                        Completed
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="actions">
+
+                                        <button
+                                            class="action-btn"
+                                            onclick="viewMeeting('AI Project Team Discussion')"
+                                        >
+
+                                            <i class="fa-regular fa-eye"></i>
+
+                                        </button>
+
+                                        <button
+                                            class="action-btn"
+                                            onclick="downloadMeeting('AI Project Team Discussion')"
+                                        >
+
+                                            <i class="fa-solid fa-download"></i>
+
+                                        </button>
+
+                                        <button
+                                            class="action-btn delete"
+                                            onclick="deleteMeeting(this)"
+                                        >
+
+                                            <i class="fa-regular fa-trash-can"></i>
+
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+
+                            <!-- MEETING 3 -->
+
+                            <tr
+                                data-name="Client Requirement Discussion"
+                                data-type="client"
+                                data-status="completed"
+                            >
+
+                                <td>
+
+                                    <div class="meeting-info">
+
+                                        <div class="meeting-icon">
+
+                                            <i class="fa-solid fa-handshake"></i>
+
+                                        </div>
+
+                                        <div>
+
+                                            <div class="meeting-name">
+                                                Client Requirement Discussion
+                                            </div>
+
+                                            <div class="meeting-type">
+                                                Client Meeting
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    Sep 29, 2026
+                                </td>
+
+
+                                <td>
+
+                                    <div class="participants">
+
+                                        <div class="participant">
+                                            RV
+                                        </div>
+
+                                        <div class="participant">
+                                            VK
+                                        </div>
+
+                                        <div class="participant more">
+                                            +1
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    35 min
+                                </td>
+
+
+                                <td>
+
+                                    <span class="status completed">
+
+                                        <span class="status-dot"></span>
+
+                                        Completed
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="actions">
+
+                                        <button
+                                            class="action-btn"
+                                            onclick="viewMeeting('Client Requirement Discussion')"
+                                        >
+
+                                            <i class="fa-regular fa-eye"></i>
+
+                                        </button>
+
+                                        <button
+                                            class="action-btn"
+                                            onclick="downloadMeeting('Client Requirement Discussion')"
+                                        >
+
+                                            <i class="fa-solid fa-download"></i>
+
+                                        </button>
+
+                                        <button
+                                            class="action-btn delete"
+                                            onclick="deleteMeeting(this)"
+                                        >
+
+                                            <i class="fa-regular fa-trash-can"></i>
+
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+
+                            <!-- MEETING 4 -->
+
+                            <tr
+                                data-name="Database Design Meeting"
+                                data-type="project"
+                                data-status="processing"
+                            >
+
+                                <td>
+
+                                    <div class="meeting-info">
+
+                                        <div class="meeting-icon">
+
+                                            <i class="fa-solid fa-database"></i>
+
+                                        </div>
+
+                                        <div>
+
+                                            <div class="meeting-name">
+                                                Database Design Meeting
+                                            </div>
+
+                                            <div class="meeting-type">
+                                                Project Meeting
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    Sep 26, 2026
+                                </td>
+
+
+                                <td>
+
+                                    <div class="participants">
+
+                                        <div class="participant">
+                                            RV
+                                        </div>
+
+                                        <div class="participant">
+                                            AJ
+                                        </div>
+
+                                        <div class="participant">
+                                            PK
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    29 min
+                                </td>
+
+
+                                <td>
+
+                                    <span class="status processing">
+
+                                        <span class="status-dot"></span>
+
+                                        Processing
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="actions">
+
+                                        <button
+                                            class="action-btn"
+                                            onclick="viewMeeting('Database Design Meeting')"
+                                        >
+
+                                            <i class="fa-regular fa-eye"></i>
+
+                                        </button>
+
+                                        <button
+                                            class="action-btn"
+                                            onclick="downloadMeeting('Database Design Meeting')"
+                                        >
+
+                                            <i class="fa-solid fa-download"></i>
+
+                                        </button>
+
+                                        <button
+                                            class="action-btn delete"
+                                            onclick="deleteMeeting(this)"
+                                        >
+
+                                            <i class="fa-regular fa-trash-can"></i>
+
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+
+                            <!-- MEETING 5 -->
+
+                            <tr
+                                data-name="Academic Project Discussion"
+                                data-type="academic"
+                                data-status="completed"
+                            >
+
+                                <td>
+
+                                    <div class="meeting-info">
+
+                                        <div class="meeting-icon">
+
+                                            <i class="fa-solid fa-graduation-cap"></i>
+
+                                        </div>
+
+                                        <div>
+
+                                            <div class="meeting-name">
+                                                Academic Project Discussion
+                                            </div>
+
+                                            <div class="meeting-type">
+                                                Academic Meeting
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    Sep 22, 2026
+                                </td>
+
+
+                                <td>
+
+                                    <div class="participants">
+
+                                        <div class="participant">
+                                            RV
+                                        </div>
+
+                                        <div class="participant">
+                                            RS
+                                        </div>
+
+                                        <div class="participant more">
+                                            +4
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    48 min
+                                </td>
+
+
+                                <td>
+
+                                    <span class="status completed">
+
+                                        <span class="status-dot"></span>
+
+                                        Completed
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="actions">
+
+                                        <button
+                                            class="action-btn"
+                                            onclick="viewMeeting('Academic Project Discussion')"
+                                        >
+
+                                            <i class="fa-regular fa-eye"></i>
+
+                                        </button>
+
+                                        <button
+                                            class="action-btn"
+                                            onclick="downloadMeeting('Academic Project Discussion')"
+                                        >
+
+                                            <i class="fa-solid fa-download"></i>
+
+                                        </button>
+
+                                        <button
+                                            class="action-btn delete"
+                                            onclick="deleteMeeting(this)"
+                                        >
+
+                                            <i class="fa-regular fa-trash-can"></i>
+
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+
+                            <!-- MEETING 6 -->
+
+                            <tr
+                                data-name="Weekly Team Sync"
+                                data-type="team"
+                                data-status="failed"
+                            >
+
+                                <td>
+
+                                    <div class="meeting-info">
+
+                                        <div class="meeting-icon">
+
+                                            <i class="fa-solid fa-arrows-rotate"></i>
+
+                                        </div>
+
+                                        <div>
+
+                                            <div class="meeting-name">
+                                                Weekly Team Sync
+                                            </div>
+
+                                            <div class="meeting-type">
+                                                Team Meeting
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    Sep 19, 2026
+                                </td>
+
+
+                                <td>
+
+                                    <div class="participants">
+
+                                        <div class="participant">
+                                            RV
+                                        </div>
+
+                                        <div class="participant">
+                                            MK
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    26 min
+                                </td>
+
+
+                                <td>
+
+                                    <span class="status failed">
+
+                                        <span class="status-dot"></span>
+
+                                        Failed
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="actions">
+
+                                        <button
+                                            class="action-btn"
+                                            onclick="viewMeeting('Weekly Team Sync')"
+                                        >
+
+                                            <i class="fa-regular fa-eye"></i>
+
+                                        </button>
+
+                                        <button
+                                            class="action-btn"
+                                            onclick="downloadMeeting('Weekly Team Sync')"
+                                        >
+
+                                            <i class="fa-solid fa-download"></i>
+
+                                        </button>
+
+                                        <button
+                                            class="action-btn delete"
+                                            onclick="deleteMeeting(this)"
+                                        >
+
+                                            <i class="fa-regular fa-trash-can"></i>
+
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+
+                    <!-- EMPTY STATE -->
+
+                    <div
+                        class="empty-state"
+                        id="emptyState"
+                    >
+
+                        <div class="empty-icon">
+
+                            <i class="fa-solid fa-magnifying-glass"></i>
+
+                        </div>
+
+                        <h3>
+                            No meetings found
+                        </h3>
+
+                        <p>
+                            Try changing your search or filter.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PAGINATION -->
+
+                <div class="pagination">
+
+                    <div class="pagination-info">
+                        Showing 1–6 of 24 meetings
+                    </div>
+
+                    <div class="pagination-buttons">
+
+                        <button class="page-btn">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+
+                        <button class="page-btn active">
+                            1
+                        </button>
+
+                        <button class="page-btn">
+                            2
+                        </button>
+
+                        <button class="page-btn">
+                            3
+                        </button>
+
+                        <button class="page-btn">
+                            4
+                        </button>
+
+                        <button class="page-btn">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <footer class="footer">
+
+            © 2026 MeetMind AI ·
+            AI Meeting Minutes Generator ·
+            Final Year Project
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+
+<!-- TOAST -->
+
+<div class="toast" id="toast">
+
+    <i class="fa-solid fa-circle-check"></i>
+
+    <span id="toastMessage">
+        Action completed
+    </span>
+
+</div>
+
+
+
+<script>
+
+    /* =================================
+       SEARCH
+    ================================= */
+
+    const searchInput =
+        document.getElementById("searchInput");
+
+    const typeFilter =
+        document.getElementById("typeFilter");
+
+    const statusFilter =
+        document.getElementById("statusFilter");
+
+    const rows =
+        document.querySelectorAll("#meetingTable tr");
+
+    const emptyState =
+        document.getElementById("emptyState");
+
+    const meetingCount =
+        document.getElementById("meetingCount");
+
+
+    function filterMeetings() {
+
+        const search =
+            searchInput.value
+                .toLowerCase()
+                .trim();
+
+        const type =
+            typeFilter.value;
+
+        const status =
+            statusFilter.value;
+
+        let visibleCount = 0;
+
+
+        rows.forEach(function(row) {
+
+            const name =
+                row.dataset.name.toLowerCase();
+
+            const rowType =
+                row.dataset.type;
+
+            const rowStatus =
+                row.dataset.status;
+
+
+            const matchesSearch =
+                name.includes(search);
+
+            const matchesType =
+                type === "all" ||
+                rowType === type;
+
+            const matchesStatus =
+                status === "all" ||
+                rowStatus === status;
+
+
+            if (
+                matchesSearch &&
+                matchesType &&
+                matchesStatus
+            ) {
+
+                row.style.display = "";
+
+                visibleCount++;
+
+            } else {
+
+                row.style.display = "none";
+
+            }
+
+        });
+
+
+        meetingCount.textContent =
+            visibleCount +
+            (visibleCount === 1
+                ? " meeting"
+                : " meetings");
+
+
+        if (visibleCount === 0) {
+
+            emptyState.style.display =
+                "block";
+
+        } else {
+
+            emptyState.style.display =
+                "none";
+
+        }
+
+    }
+
+
+    searchInput.addEventListener(
+        "input",
+        filterMeetings
+    );
+
+    typeFilter.addEventListener(
+        "change",
+        filterMeetings
+    );
+
+    statusFilter.addEventListener(
+        "change",
+        filterMeetings
+    );
+
+
+    /* =================================
+       VIEW MEETING
+    ================================= */
+
+    function viewMeeting(name) {
+
+        showToast(
+            "Opening " + name
+        );
+
+        /*
+            Later connect this to:
+            minutes.html?id=...
+        */
+
+    }
+
+
+    /* =================================
+       DOWNLOAD
+    ================================= */
+
+    function downloadMeeting(name) {
+
+        showToast(
+            "Preparing minutes for download..."
+        );
+
+        /*
+            Later connect this to FastAPI:
+            /download/{meeting_id}
+        */
+
+    }
+
+
+    /* =================================
+       DELETE
+    ================================= */
+
+    function deleteMeeting(button) {
+
+        const confirmed =
+            confirm(
+                "Are you sure you want to remove this meeting from history?"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        const row =
+            button.closest("tr");
+
+
+        row.remove();
+
+
+        filterMeetings();
+
+
+        showToast(
+            "Meeting removed successfully"
+        );
+
+    }
+
+
+    /* =================================
+       TOAST
+    ================================= */
+
+    function showToast(message) {
+
+        const toast =
+            document.getElementById("toast");
+
+        const toastMessage =
+            document.getElementById("toastMessage");
+
+
+        toastMessage.textContent =
+            message;
+
+
+        toast.classList.add("show");
+
+
+        setTimeout(function() {
+
+            toast.classList.remove("show");
+
+        }, 2500);
+
+    }
+
+
+    /* =================================
+       PAGINATION DEMO
+    ================================= */
+
+    document
+        .querySelectorAll(".page-btn")
+        .forEach(function(button) {
+
+            button.addEventListener(
+                "click",
+                function() {
+
+                    if (
+                        this.textContent.trim() !== ""
+                    ) {
+
+                        document
+                            .querySelectorAll(".page-btn")
+                            .forEach(function(btn) {
+
+                                btn.classList.remove(
+                                    "active"
+                                );
+
+                            });
+
+
+                        this.classList.add("active");
+
+                    }
+
+                }
+            );
+
+        });
+
+</script>
+
+</body>
+</html>
+```

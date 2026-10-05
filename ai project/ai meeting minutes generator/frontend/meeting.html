@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>New Meeting | MeetMind AI</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+
+            --bg: #f5f7fb;
+            --card: #ffffff;
+            --text: #172033;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+
+            --sidebar: #111827;
+            --sidebar-text: #9ca3af;
+            --sidebar-active: #1f2937;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        button,
+        input,
+        textarea,
+        select {
+            font-family: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        /* =========================
+           APP LAYOUT
+        ========================= */
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar);
+            color: white;
+            padding: 24px 16px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px 30px;
+        }
+
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .brand-text h2 {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .brand-text span {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 15px 12px 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 4px;
+            transition: 0.2s ease;
+            font-size: 14px;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: var(--sidebar-active);
+            color: white;
+        }
+
+        .nav-item.active {
+            border-left: 3px solid var(--primary);
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+        }
+
+        .topbar {
+            height: 76px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 35px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .page-title h1 {
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+        .page-title p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 10px;
+            color: #4b5563;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* =========================
+           CONTENT
+        ========================= */
+
+        .content {
+            padding: 32px;
+            max-width: 1500px;
+            margin: auto;
+        }
+
+        .page-intro {
+            margin-bottom: 25px;
+        }
+
+        .page-intro h2 {
+            font-size: 26px;
+            margin-bottom: 7px;
+        }
+
+        .page-intro p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* =========================
+           GRID
+        ========================= */
+
+        .meeting-grid {
+            display: grid;
+            grid-template-columns: 1.6fr 0.8fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 8px 30px rgba(15, 23, 42, 0.04);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .card-header h3 {
+            font-size: 17px;
+        }
+
+        .card-header p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        /* =========================
+           UPLOAD AREA
+        ========================= */
+
+        .upload-area {
+            border: 2px dashed #c7d2fe;
+            background: #f8faff;
+            border-radius: 16px;
+            padding: 45px 25px;
+            text-align: center;
+            transition: 0.25s ease;
+        }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: var(--primary);
+            background: #eef2ff;
+        }
+
+        .upload-icon {
+            width: 70px;
+            height: 70px;
+            margin: auto auto 18px;
+            border-radius: 20px;
+            background: #e0e7ff;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .upload-area h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .upload-area p {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 18px;
+        }
+
+        .browse-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+        }
+
+        .browse-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .formats {
+            margin-top: 15px;
+            color: #9ca3af;
+            font-size: 11px;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* =========================
+           FILE PREVIEW
+        ========================= */
+
+        .file-preview {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9fafb;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .file-preview.show {
+            display: flex;
+        }
+
+        .file-icon {
+            width: 45px;
+            height: 45px;
+            background: #ede9fe;
+            color: var(--secondary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .file-size {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .remove-file {
+            border: none;
+            background: transparent;
+            color: var(--danger);
+            font-size: 16px;
+        }
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .form-section {
+            margin-top: 24px;
+        }
+
+        .form-section h3 {
+            font-size: 16px;
+            margin-bottom: 18px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            background: white;
+            font-size: 13px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        /* =========================
+           AI OPTIONS
+        ========================= */
+
+        .ai-options {
+            margin-top: 24px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .option:hover {
+            border-color: #c7d2fe;
+            background: #fafaff;
+        }
+
+        .option input {
+            accent-color: var(--primary);
+        }
+
+        .option-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 9px;
+            background: #eef2ff;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .option-content {
+            flex: 1;
+        }
+
+        .option-title {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .option-description {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        /* =========================
+           SIDE PANEL
+        ========================= */
+
+        .ai-card {
+            background: linear-gradient(145deg, #111827, #1e1b4b);
+            color: white;
+            border: none;
+        }
+
+        .ai-card h3 {
+            font-size: 17px;
+            margin-bottom: 7px;
+        }
+
+        .ai-card > p {
+            color: #a5b4fc;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .ai-status {
+            margin-top: 20px;
+            padding: 14px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 10px #22c55e;
+        }
+
+        .ai-status span {
+            font-size: 12px;
+            color: #d1d5db;
+        }
+
+        /* =========================
+           FEATURES
+        ========================= */
+
+        .features-card {
+            margin-top: 20px;
+        }
+
+        .feature {
+            display: flex;
+            gap: 12px;
+            padding: 13px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .feature:last-child {
+            border-bottom: none;
+        }
+
+        .feature-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 9px;
+            background: #eef2ff;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .feature h4 {
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .feature p {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        /* =========================
+           GENERATE BUTTON
+        ========================= */
+
+        .generate-btn {
+            width: 100%;
+            margin-top: 22px;
+            border: none;
+            padding: 15px;
+            border-radius: 11px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: 0.2s ease;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.25);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* =========================
+           PROGRESS
+        ========================= */
+
+        .progress-section {
+            display: none;
+            margin-top: 20px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .progress-section.show {
+            display: block;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 9px;
+        }
+
+        .progress-bar {
+            height: 7px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-value {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: #9ca3af;
+            font-size: 11px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1100px) {
+            .meeting-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                width: 220px;
+            }
+
+            .main {
+                margin-left: 220px;
+                width: calc(100% - 220px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .topbar {
+                padding: 0 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .page-title h1 {
+                font-size: 17px;
+            }
+
+            .page-title p {
+                display: none;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .upload-area {
+                padding: 30px 15px;
+            }
+
+            .top-actions .icon-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+            <div class="brand-logo">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+
+            <div class="brand-text">
+                <h2>MeetMind AI</h2>
+                <span>Meeting Intelligence</span>
+            </div>
+        </div>
+
+        <div class="nav-label">Workspace</div>
+
+        <a href="index.html" class="nav-item">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="meeting.html" class="nav-item active">
+            <i class="fa-solid fa-plus"></i>
+            <span>New Meeting</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Meeting History</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Analytics</span>
+        </a>
+
+        <div class="nav-label">Management</div>
+
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-list-check"></i>
+            <span>Action Items</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-file-lines"></i>
+            <span>Documents</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+        </a>
+
+    </aside>
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="main">
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div class="page-title">
+                <h1>New Meeting</h1>
+                <p>Create AI-powered meeting minutes</p>
+            </div>
+
+            <div class="top-actions">
+
+                <button class="icon-btn">
+                    <i class="fa-regular fa-bell"></i>
+                </button>
+
+                <div class="avatar">
+                    RV
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+
+        <section class="content">
+
+            <div class="page-intro">
+                <h2>Create New Meeting Minutes</h2>
+                <p>
+                    Upload your meeting recording and let AI automatically
+                    generate professional meeting minutes.
+                </p>
+            </div>
+
+
+            <div class="meeting-grid">
+
+                <!-- =====================
+                     LEFT COLUMN
+                ====================== -->
+
+                <div>
+
+                    <!-- Upload Card -->
+
+                    <div class="card">
+
+                        <div class="card-header">
+                            <div>
+                                <h3>Meeting Recording</h3>
+                                <p>Upload your audio or video recording</p>
+                            </div>
+
+                            <i class="fa-solid fa-cloud-arrow-up"
+                               style="color:#6366f1;"></i>
+                        </div>
+
+
+                        <div class="upload-area" id="uploadArea">
+
+                            <div class="upload-icon">
+                                <i class="fa-solid fa-microphone-lines"></i>
+                            </div>
+
+                            <h3>Drop your meeting recording here</h3>
+
+                            <p>
+                                or select a file from your computer
+                            </p>
+
+                            <button class="browse-btn"
+                                    type="button"
+                                    onclick="document.getElementById('fileInput').click()">
+
+                                <i class="fa-solid fa-folder-open"></i>
+                                Browse File
+                            </button>
+
+                            <input
+                                type="file"
+                                id="fileInput"
+                                accept=".mp3,.wav,.m4a,.mp4,.avi,.mov,.mkv,.webm"
+                            >
+
+                            <div class="formats">
+                                MP3 · WAV · M4A · MP4 · AVI · MOV · MKV · WEBM
+                            </div>
+
+                        </div>
+
+
+                        <!-- File Preview -->
+
+                        <div class="file-preview" id="filePreview">
+
+                            <div class="file-icon">
+                                <i class="fa-solid fa-file-audio"></i>
+                            </div>
+
+                            <div class="file-info">
+                                <div class="file-name" id="fileName">
+                                    meeting.mp3
+                                </div>
+
+                                <div class="file-size" id="fileSize">
+                                    0 MB
+                                </div>
+                            </div>
+
+                            <button class="remove-file"
+                                    id="removeFile"
+                                    type="button">
+
+                                <i class="fa-solid fa-xmark"></i>
+
+                            </button>
+
+                        </div>
+
+
+                        <!-- Meeting Details -->
+
+                        <div class="form-section">
+
+                            <h3>Meeting Details</h3>
+
+                            <div class="form-grid">
+
+                                <div class="form-group">
+                                    <label>Meeting Title</label>
+
+                                    <input
+                                        type="text"
+                                        id="meetingTitle"
+                                        placeholder="e.g. Project Review Meeting"
+                                    >
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label>Meeting Type</label>
+
+                                    <select id="meetingType">
+
+                                        <option value="">
+                                            Select meeting type
+                                        </option>
+
+                                        <option>
+                                            Project Meeting
+                                        </option>
+
+                                        <option>
+                                            Team Meeting
+                                        </option>
+
+                                        <option>
+                                            Client Meeting
+                                        </option>
+
+                                        <option>
+                                            Management Meeting
+                                        </option>
+
+                                        <option>
+                                            Academic Meeting
+                                        </option>
+
+                                        <option>
+                                            Other
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label>Meeting Date</label>
+
+                                    <input
+                                        type="date"
+                                        id="meetingDate"
+                                    >
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label>Participants</label>
+
+                                    <input
+                                        type="text"
+                                        id="participants"
+                                        placeholder="e.g. Ranjith, Arun, Priya"
+                                    >
+
+                                </div>
+
+
+                                <div class="form-group full">
+
+                                    <label>Meeting Description</label>
+
+                                    <textarea
+                                        id="meetingDescription"
+                                        placeholder="Add a short description about this meeting..."
+                                    ></textarea>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- AI OPTIONS -->
+
+                        <div class="ai-options">
+
+                            <h3>AI Processing Options</h3>
+
+
+                            <label class="option">
+
+                                <input type="checkbox"
+                                       checked
+                                       id="transcriptionOption">
+
+                                <div class="option-icon">
+                                    <i class="fa-solid fa-file-lines"></i>
+                                </div>
+
+                                <div class="option-content">
+
+                                    <div class="option-title">
+                                        Smart Transcription
+                                    </div>
+
+                                    <div class="option-description">
+                                        Convert speech into accurate text
+                                    </div>
+
+                                </div>
+
+                            </label>
+
+
+                            <label class="option">
+
+                                <input type="checkbox"
+                                       checked
+                                       id="summaryOption">
+
+                                <div class="option-icon">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                </div>
+
+                                <div class="option-content">
+
+                                    <div class="option-title">
+                                        AI Summary
+                                    </div>
+
+                                    <div class="option-description">
+                                        Generate a concise meeting summary
+                                    </div>
+
+                                </div>
+
+                            </label>
+
+
+                            <label class="option">
+
+                                <input type="checkbox"
+                                       checked
+                                       id="actionOption">
+
+                                <div class="option-icon">
+                                    <i class="fa-solid fa-list-check"></i>
+                                </div>
+
+                                <div class="option-content">
+
+                                    <div class="option-title">
+                                        Action Item Detection
+                                    </div>
+
+                                    <div class="option-description">
+                                        Identify tasks, owners and deadlines
+                                    </div>
+
+                                </div>
+
+                            </label>
+
+
+                            <label class="option">
+
+                                <input type="checkbox"
+                                       checked
+                                       id="decisionOption">
+
+                                <div class="option-icon">
+                                    <i class="fa-solid fa-gavel"></i>
+                                </div>
+
+                                <div class="option-content">
+
+                                    <div class="option-title">
+                                        Decision Detection
+                                    </div>
+
+                                    <div class="option-description">
+                                        Extract important decisions
+                                    </div>
+
+                                </div>
+
+                            </label>
+
+                        </div>
+
+
+                        <!-- Progress -->
+
+                        <div class="progress-section" id="progressSection">
+
+                            <div class="progress-header">
+
+                                <span id="progressText">
+                                    Processing meeting...
+                                </span>
+
+                                <span id="progressPercent">
+                                    0%
+                                </span>
+
+                            </div>
+
+                            <div class="progress-bar">
+
+                                <div class="progress-value"
+                                     id="progressValue">
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Generate -->
+
+                        <button class="generate-btn"
+                                id="generateBtn"
+                                type="button">
+
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+
+                            Generate AI Meeting Minutes
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================
+                     RIGHT COLUMN
+                ====================== -->
+
+                <div>
+
+                    <!-- AI Status -->
+
+                    <div class="card ai-card">
+
+                        <h3>
+                            <i class="fa-solid fa-robot"></i>
+                            MeetMind AI
+                        </h3>
+
+                        <p>
+                            Your intelligent meeting assistant transforms
+                            long conversations into structured and actionable
+                            meeting minutes.
+                        </p>
+
+
+                        <div class="ai-status">
+
+                            <span class="status-dot"></span>
+
+                            <span>
+                                AI Engine Ready
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- AI Features -->
+
+                    <div class="card features-card">
+
+                        <div class="card-header">
+
+                            <div>
+                                <h3>AI Capabilities</h3>
+                                <p>What MeetMind AI can do</p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="feature">
+
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-language"></i>
+                            </div>
+
+                            <div>
+                                <h4>Multi-language Transcription</h4>
+                                <p>
+                                    Convert meeting conversations into
+                                    searchable text.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="feature">
+
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-brain"></i>
+                            </div>
+
+                            <div>
+                                <h4>Intelligent Summary</h4>
+                                <p>
+                                    Understand the most important points
+                                    automatically.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="feature">
+
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-list-check"></i>
+                            </div>
+
+                            <div>
+                                <h4>Action Items</h4>
+                                <p>
+                                    Detect tasks and responsibilities from
+                                    the conversation.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="feature">
+
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-lightbulb"></i>
+                            </div>
+
+                            <div>
+                                <h4>Decision Detection</h4>
+                                <p>
+                                    Highlight important decisions made
+                                    during meetings.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="feature">
+
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-file-export"></i>
+                            </div>
+
+                            <div>
+                                <h4>Professional Minutes</h4>
+                                <p>
+                                    Generate structured meeting minutes
+                                    ready for sharing.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <footer class="footer">
+            © 2026 MeetMind AI · AI Meeting Minutes Generator · Final Year Project
+        </footer>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    const fileInput = document.getElementById("fileInput");
+    const uploadArea = document.getElementById("uploadArea");
+
+    const filePreview = document.getElementById("filePreview");
+    const fileName = document.getElementById("fileName");
+    const fileSize = document.getElementById("fileSize");
+
+    const removeFile = document.getElementById("removeFile");
+
+    const generateBtn = document.getElementById("generateBtn");
+
+    const progressSection =
+        document.getElementById("progressSection");
+
+    const progressValue =
+        document.getElementById("progressValue");
+
+    const progressPercent =
+        document.getElementById("progressPercent");
+
+    const progressText =
+        document.getElementById("progressText");
+
+
+    /* =========================
+       FILE SELECTION
+    ========================== */
+
+    fileInput.addEventListener("change", function () {
+
+        if (this.files.length > 0) {
+
+            showFile(this.files[0]);
+
+        }
+
+    });
+
+
+    function showFile(file) {
+
+        fileName.textContent = file.name;
+
+        fileSize.textContent =
+            formatFileSize(file.size);
+
+        filePreview.classList.add("show");
+
+    }
+
+
+    function formatFileSize(bytes) {
+
+        if (bytes === 0) {
+            return "0 Bytes";
+        }
+
+        const sizes = [
+            "Bytes",
+            "KB",
+            "MB",
+            "GB"
+        ];
+
+        const i =
+            Math.floor(Math.log(bytes) / Math.log(1024));
+
+        return (
+            parseFloat(
+                (bytes / Math.pow(1024, i)).toFixed(2)
+            )
+            + " "
+            + sizes[i]
+        );
+
+    }
+
+
+    /* =========================
+       REMOVE FILE
+    ========================== */
+
+    removeFile.addEventListener("click", function () {
+
+        fileInput.value = "";
+
+        filePreview.classList.remove("show");
+
+    });
+
+
+    /* =========================
+       DRAG & DROP
+    ========================== */
+
+    uploadArea.addEventListener("dragover", function (event) {
+
+        event.preventDefault();
+
+        uploadArea.classList.add("dragover");
+
+    });
+
+
+    uploadArea.addEventListener("dragleave", function () {
+
+        uploadArea.classList.remove("dragover");
+
+    });
+
+
+    uploadArea.addEventListener("drop", function (event) {
+
+        event.preventDefault();
+
+        uploadArea.classList.remove("dragover");
+
+        const files = event.dataTransfer.files;
+
+        if (files.length > 0) {
+
+            fileInput.files = files;
+
+            showFile(files[0]);
+
+        }
+
+    });
+
+
+    /* =========================
+       GENERATE BUTTON
+    ========================== */
+
+    generateBtn.addEventListener("click", function () {
+
+        if (!fileInput.files.length) {
+
+            alert("Please select a meeting recording first.");
+
+            return;
+
+        }
+
+
+        const title =
+            document.getElementById("meetingTitle").value.trim();
+
+
+        if (!title) {
+
+            alert("Please enter the meeting title.");
+
+            document.getElementById("meetingTitle").focus();
+
+            return;
+
+        }
+
+
+        progressSection.classList.add("show");
+
+        generateBtn.disabled = true;
+
+
+        let progress = 0;
+
+
+        const interval = setInterval(function () {
+
+            progress += 5;
+
+            progressValue.style.width =
+                progress + "%";
+
+            progressPercent.textContent =
+                progress + "%";
+
+
+            if (progress < 30) {
+
+                progressText.textContent =
+                    "Uploading meeting recording...";
+
+            }
+            else if (progress < 60) {
+
+                progressText.textContent =
+                    "Transcribing meeting audio...";
+
+            }
+            else if (progress < 85) {
+
+                progressText.textContent =
+                    "Analyzing meeting with AI...";
+
+            }
+            else {
+
+                progressText.textContent =
+                    "Generating meeting minutes...";
+
+            }
+
+
+            if (progress >= 100) {
+
+                clearInterval(interval);
+
+                progressText.textContent =
+                    "Meeting minutes generated successfully!";
+
+                setTimeout(function () {
+
+                    alert(
+                        "AI Meeting Minutes generated successfully!"
+                    );
+
+                    generateBtn.disabled = false;
+
+                }, 500);
+
+            }
+
+        }, 180);
+
+    });
+
+
+    /* =========================
+       DEFAULT DATE
+    ========================== */
+
+    const dateInput =
+        document.getElementById("meetingDate");
+
+    const today =
+        new Date().toISOString().split("T")[0];
+
+    dateInput.value = today;
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2147 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Analytics | MeetMind AI</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        /* =====================================
+           GLOBAL
+        ===================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --blue: #3b82f6;
+
+            --bg: #f5f7fb;
+            --card: #ffffff;
+
+            --text: #172033;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+
+            --sidebar: #111827;
+            --sidebar-active: #1f2937;
+            --sidebar-text: #9ca3af;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        button,
+        select {
+            font-family: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+
+        /* =====================================
+           APP
+        ===================================== */
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+
+        /* =====================================
+           SIDEBAR
+        ===================================== */
+
+        .sidebar {
+            width: 260px;
+
+            background: var(--sidebar);
+            color: white;
+
+            padding: 24px 16px;
+
+            position: fixed;
+
+            left: 0;
+            top: 0;
+            bottom: 0;
+
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 0 10px 30px;
+        }
+
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 12px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6366f1,
+                    #8b5cf6
+                );
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 19px;
+        }
+
+        .brand-text h2 {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .brand-text span {
+            font-size: 10px;
+            color: #9ca3af;
+        }
+
+        .nav-label {
+            font-size: 10px;
+
+            font-weight: 700;
+
+            color: #6b7280;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+
+            padding: 15px 12px 8px;
+        }
+
+        .nav-item {
+            display: flex;
+
+            align-items: center;
+
+            gap: 13px;
+
+            color: var(--sidebar-text);
+
+            padding: 12px;
+
+            border-radius: 10px;
+
+            margin-bottom: 4px;
+
+            font-size: 14px;
+
+            transition: 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background: var(--sidebar-active);
+
+            color: white;
+        }
+
+        .nav-item.active {
+            background: var(--sidebar-active);
+
+            color: white;
+
+            border-left: 3px solid var(--primary);
+        }
+
+        .nav-item i {
+            width: 20px;
+
+            text-align: center;
+        }
+
+
+        /* =====================================
+           MAIN
+        ===================================== */
+
+        .main {
+            margin-left: 260px;
+
+            width: calc(100% - 260px);
+        }
+
+
+        /* =====================================
+           TOPBAR
+        ===================================== */
+
+        .topbar {
+            height: 76px;
+
+            background: white;
+
+            border-bottom: 1px solid var(--border);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 35px;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 50;
+        }
+
+        .page-title h1 {
+            font-size: 21px;
+
+            font-weight: 800;
+        }
+
+        .page-title p {
+            color: var(--muted);
+
+            font-size: 12px;
+
+            margin-top: 4px;
+        }
+
+        .top-actions {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+
+            border: 1px solid var(--border);
+
+            background: white;
+
+            border-radius: 10px;
+
+            color: #4b5563;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+
+            border-radius: 50%;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6366f1,
+                    #8b5cf6
+                );
+
+            color: white;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 13px;
+
+            font-weight: 700;
+        }
+
+
+        /* =====================================
+           CONTENT
+        ===================================== */
+
+        .content {
+            padding: 32px;
+
+            max-width: 1500px;
+
+            margin: auto;
+        }
+
+        .page-intro {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: flex-end;
+
+            gap: 20px;
+
+            margin-bottom: 25px;
+        }
+
+        .page-intro h2 {
+            font-size: 26px;
+
+            margin-bottom: 7px;
+        }
+
+        .page-intro p {
+            color: var(--muted);
+
+            font-size: 14px;
+        }
+
+        .period-select {
+            height: 40px;
+
+            padding: 0 13px;
+
+            border: 1px solid var(--border);
+
+            background: white;
+
+            border-radius: 9px;
+
+            color: #4b5563;
+
+            outline: none;
+
+            font-size: 12px;
+        }
+
+
+        /* =====================================
+           STAT CARDS
+        ===================================== */
+
+        .stats-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 16px;
+
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+
+            border: 1px solid var(--border);
+
+            border-radius: 16px;
+
+            padding: 20px;
+
+            position: relative;
+
+            overflow: hidden;
+        }
+
+        .stat-top {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: flex-start;
+        }
+
+        .stat-icon {
+            width: 43px;
+            height: 43px;
+
+            border-radius: 11px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            background: #eef2ff;
+
+            color: var(--primary);
+        }
+
+        .stat-change {
+            padding: 5px 8px;
+
+            border-radius: 20px;
+
+            font-size: 10px;
+
+            font-weight: 700;
+        }
+
+        .positive {
+            color: #047857;
+
+            background: #ecfdf5;
+        }
+
+        .negative {
+            color: #b91c1c;
+
+            background: #fef2f2;
+        }
+
+        .stat-value {
+            font-size: 27px;
+
+            font-weight: 800;
+
+            margin-top: 17px;
+        }
+
+        .stat-title {
+            color: var(--muted);
+
+            font-size: 11px;
+
+            margin-top: 5px;
+        }
+
+
+        /* =====================================
+           CHART GRID
+        ===================================== */
+
+        .chart-grid {
+            display: grid;
+
+            grid-template-columns:
+                1.7fr 1fr;
+
+            gap: 20px;
+
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+
+            border: 1px solid var(--border);
+
+            border-radius: 17px;
+
+            padding: 22px;
+
+            box-shadow:
+                0 8px 30px
+                rgba(15, 23, 42, 0.03);
+        }
+
+        .card-header {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 20px;
+        }
+
+        .card-header h3 {
+            font-size: 15px;
+        }
+
+        .card-header p {
+            color: var(--muted);
+
+            font-size: 11px;
+
+            margin-top: 4px;
+        }
+
+        .chart-container {
+            height: 300px;
+
+            position: relative;
+        }
+
+
+        /* =====================================
+           SECOND ROW
+        ===================================== */
+
+        .second-grid {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 20px;
+
+            margin-bottom: 20px;
+        }
+
+
+        /* =====================================
+           MEETING TYPES
+        ===================================== */
+
+        .type-layout {
+            display: flex;
+
+            align-items: center;
+
+            gap: 25px;
+
+            min-height: 270px;
+        }
+
+        .donut-container {
+            width: 190px;
+            height: 190px;
+
+            position: relative;
+
+            flex-shrink: 0;
+        }
+
+        .type-legend {
+            flex: 1;
+        }
+
+        .legend-item {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 10px 0;
+
+            border-bottom: 1px solid #f1f2f4;
+        }
+
+        .legend-left {
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+        }
+
+        .legend-dot {
+            width: 9px;
+            height: 9px;
+
+            border-radius: 50%;
+        }
+
+        .legend-name {
+            font-size: 11px;
+
+            color: #4b5563;
+        }
+
+        .legend-value {
+            font-size: 11px;
+
+            font-weight: 700;
+        }
+
+
+        /* =====================================
+           PRODUCTIVITY
+        ===================================== */
+
+        .productivity-item {
+            margin-bottom: 21px;
+        }
+
+        .productivity-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            margin-bottom: 8px;
+        }
+
+        .productivity-header span {
+            font-size: 11px;
+
+            color: #4b5563;
+        }
+
+        .productivity-header strong {
+            font-size: 11px;
+        }
+
+        .progress {
+            width: 100%;
+
+            height: 8px;
+
+            background: #eef0f3;
+
+            border-radius: 10px;
+
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--primary),
+                    var(--secondary)
+                );
+        }
+
+
+        /* =====================================
+           INSIGHTS
+        ===================================== */
+
+        .insights-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 15px;
+        }
+
+        .insight {
+            padding: 17px;
+
+            border: 1px solid var(--border);
+
+            border-radius: 12px;
+
+            background: #fafbff;
+        }
+
+        .insight-icon {
+            width: 37px;
+            height: 37px;
+
+            border-radius: 10px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            background: #eef2ff;
+
+            color: var(--primary);
+
+            margin-bottom: 12px;
+        }
+
+        .insight h4 {
+            font-size: 12px;
+
+            margin-bottom: 6px;
+        }
+
+        .insight p {
+            color: var(--muted);
+
+            font-size: 10px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =====================================
+           ACTIVITY
+        ===================================== */
+
+        .activity-list {
+            display: flex;
+
+            flex-direction: column;
+        }
+
+        .activity-item {
+            display: flex;
+
+            gap: 12px;
+
+            padding: 14px 0;
+
+            border-bottom: 1px solid #f0f1f3;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 35px;
+            height: 35px;
+
+            border-radius: 9px;
+
+            background: #eef2ff;
+
+            color: var(--primary);
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-content strong {
+            font-size: 11px;
+        }
+
+        .activity-content p {
+            color: var(--muted);
+
+            font-size: 10px;
+
+            margin-top: 4px;
+        }
+
+        .activity-time {
+            color: #9ca3af;
+
+            font-size: 9px;
+        }
+
+
+        /* =====================================
+           FOOTER
+        ===================================== */
+
+        .footer {
+            text-align: center;
+
+            padding: 25px;
+
+            color: #9ca3af;
+
+            font-size: 11px;
+        }
+
+
+        /* =====================================
+           RESPONSIVE
+        ===================================== */
+
+        @media (max-width: 1150px) {
+
+            .sidebar {
+                width: 220px;
+            }
+
+            .main {
+                margin-left: 220px;
+
+                width: calc(100% - 220px);
+            }
+
+            .stats-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+
+                transition: 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+
+                width: 100%;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .topbar {
+                padding: 0 20px;
+            }
+
+            .second-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-intro {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+        }
+
+
+        @media (max-width: 550px) {
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .page-intro h2 {
+                font-size: 22px;
+            }
+
+            .type-layout {
+                flex-direction: column;
+
+                padding: 10px 0 20px;
+            }
+
+            .top-actions .icon-btn {
+                display: none;
+            }
+
+            .card {
+                padding: 17px;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+    <!-- =================================
+         SIDEBAR
+    ================================== -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-logo">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+
+            <div class="brand-text">
+
+                <h2>MeetMind AI</h2>
+
+                <span>
+                    Meeting Intelligence
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="nav-label">
+            Workspace
+        </div>
+
+
+        <a href="index.html" class="nav-item">
+
+            <i class="fa-solid fa-chart-pie"></i>
+
+            <span>Dashboard</span>
+
+        </a>
+
+
+        <a href="meeting.html" class="nav-item">
+
+            <i class="fa-solid fa-plus"></i>
+
+            <span>New Meeting</span>
+
+        </a>
+
+
+        <a href="history.html" class="nav-item">
+
+            <i class="fa-solid fa-clock-rotate-left"></i>
+
+            <span>Meeting History</span>
+
+        </a>
+
+
+        <a href="analytics.html"
+           class="nav-item active">
+
+            <i class="fa-solid fa-chart-line"></i>
+
+            <span>Analytics</span>
+
+        </a>
+
+
+        <div class="nav-label">
+            Management
+        </div>
+
+
+        <a href="#" class="nav-item">
+
+            <i class="fa-solid fa-list-check"></i>
+
+            <span>Action Items</span>
+
+        </a>
+
+
+        <a href="#" class="nav-item">
+
+            <i class="fa-solid fa-file-lines"></i>
+
+            <span>Documents</span>
+
+        </a>
+
+
+        <a href="#" class="nav-item">
+
+            <i class="fa-solid fa-gear"></i>
+
+            <span>Settings</span>
+
+        </a>
+
+    </aside>
+
+
+
+    <!-- =================================
+         MAIN
+    ================================== -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div class="page-title">
+
+                <h1>
+                    Analytics
+                </h1>
+
+                <p>
+                    Understand your meeting productivity
+                </p>
+
+            </div>
+
+
+            <div class="top-actions">
+
+                <button class="icon-btn">
+
+                    <i class="fa-regular fa-bell"></i>
+
+                </button>
+
+
+                <div class="avatar">
+                    RV
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- CONTENT -->
+
+        <section class="content">
+
+
+            <!-- INTRO -->
+
+            <div class="page-intro">
+
+                <div>
+
+                    <h2>
+                        Meeting Analytics
+                    </h2>
+
+                    <p>
+                        Track meetings, productivity,
+                        action items and AI-generated insights.
+                    </p>
+
+                </div>
+
+
+                <select
+                    class="period-select"
+                    id="periodSelect"
+                >
+
+                    <option value="month">
+                        This Month
+                    </option>
+
+                    <option value="quarter">
+                        Last 3 Months
+                    </option>
+
+                    <option value="year">
+                        This Year
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <!-- =================================
+                 STATISTICS
+            ================================== -->
+
+            <div class="stats-grid">
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div class="stat-icon">
+
+                            <i class="fa-solid fa-calendar-days"></i>
+
+                        </div>
+
+                        <span class="stat-change positive">
+                            +18.4%
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-value">
+                        24
+                    </div>
+
+                    <div class="stat-title">
+                        Total Meetings
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div class="stat-icon">
+
+                            <i class="fa-solid fa-clock"></i>
+
+                        </div>
+
+                        <span class="stat-change positive">
+                            +12.7%
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-value">
+                        38.5h
+                    </div>
+
+                    <div class="stat-title">
+                        Meeting Hours
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div class="stat-icon">
+
+                            <i class="fa-solid fa-list-check"></i>
+
+                        </div>
+
+                        <span class="stat-change positive">
+                            +24.2%
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-value">
+                        87
+                    </div>
+
+                    <div class="stat-title">
+                        Action Items
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div class="stat-icon">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        </div>
+
+                        <span class="stat-change positive">
+                            +6.8%
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-value">
+                        82%
+                    </div>
+
+                    <div class="stat-title">
+                        Completion Rate
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================
+                 CHARTS
+            ================================== -->
+
+            <div class="chart-grid">
+
+
+                <!-- MONTHLY CHART -->
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Meeting Activity
+                            </h3>
+
+                            <p>
+                                Meetings and hours over time
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="chart-container">
+
+                        <canvas id="meetingChart"></canvas>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- AI PERFORMANCE -->
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                AI Processing
+                            </h3>
+
+                            <p>
+                                Minutes generation performance
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="chart-container">
+
+                        <canvas id="aiChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================
+                 SECOND ROW
+            ================================== -->
+
+            <div class="second-grid">
+
+
+                <!-- MEETING TYPES -->
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Meeting Types
+                            </h3>
+
+                            <p>
+                                Distribution by meeting category
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="type-layout">
+
+
+                        <div class="donut-container">
+
+                            <canvas id="typeChart"></canvas>
+
+                        </div>
+
+
+                        <div class="type-legend">
+
+
+                            <div class="legend-item">
+
+                                <div class="legend-left">
+
+                                    <span
+                                        class="legend-dot"
+                                        style="background:#6366f1;"
+                                    ></span>
+
+                                    <span class="legend-name">
+                                        Project
+                                    </span>
+
+                                </div>
+
+                                <span class="legend-value">
+                                    42%
+                                </span>
+
+                            </div>
+
+
+                            <div class="legend-item">
+
+                                <div class="legend-left">
+
+                                    <span
+                                        class="legend-dot"
+                                        style="background:#8b5cf6;"
+                                    ></span>
+
+                                    <span class="legend-name">
+                                        Team
+                                    </span>
+
+                                </div>
+
+                                <span class="legend-value">
+                                    28%
+                                </span>
+
+                            </div>
+
+
+                            <div class="legend-item">
+
+                                <div class="legend-left">
+
+                                    <span
+                                        class="legend-dot"
+                                        style="background:#10b981;"
+                                    ></span>
+
+                                    <span class="legend-name">
+                                        Client
+                                    </span>
+
+                                </div>
+
+                                <span class="legend-value">
+                                    18%
+                                </span>
+
+                            </div>
+
+
+                            <div class="legend-item">
+
+                                <div class="legend-left">
+
+                                    <span
+                                        class="legend-dot"
+                                        style="background:#f59e0b;"
+                                    ></span>
+
+                                    <span class="legend-name">
+                                        Academic
+                                    </span>
+
+                                </div>
+
+                                <span class="legend-value">
+                                    12%
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PRODUCTIVITY -->
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Productivity Metrics
+                            </h3>
+
+                            <p>
+                                Current team performance
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="productivity-item">
+
+                        <div class="productivity-header">
+
+                            <span>
+                                Action Item Completion
+                            </span>
+
+                            <strong>
+                                82%
+                            </strong>
+
+                        </div>
+
+                        <div class="progress">
+
+                            <div
+                                class="progress-bar"
+                                style="width:82%;"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="productivity-item">
+
+                        <div class="productivity-header">
+
+                            <span>
+                                Minutes Generated
+                            </span>
+
+                            <strong>
+                                92%
+                            </strong>
+
+                        </div>
+
+                        <div class="progress">
+
+                            <div
+                                class="progress-bar"
+                                style="width:92%;"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="productivity-item">
+
+                        <div class="productivity-header">
+
+                            <span>
+                                Transcription Success
+                            </span>
+
+                            <strong>
+                                96%
+                            </strong>
+
+                        </div>
+
+                        <div class="progress">
+
+                            <div
+                                class="progress-bar"
+                                style="width:96%;"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="productivity-item">
+
+                        <div class="productivity-header">
+
+                            <span>
+                                Decision Detection
+                            </span>
+
+                            <strong>
+                                89%
+                            </strong>
+
+                        </div>
+
+                        <div class="progress">
+
+                            <div
+                                class="progress-bar"
+                                style="width:89%;"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================
+                 INSIGHTS
+            ================================== -->
+
+            <div class="card"
+                 style="margin-bottom:20px;">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            AI Productivity Insights
+                        </h3>
+
+                        <p>
+                            Intelligent observations from your meetings
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="insights-grid">
+
+
+                    <div class="insight">
+
+                        <div class="insight-icon">
+
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+
+                        </div>
+
+                        <h4>
+                            Meeting Activity Increased
+                        </h4>
+
+                        <p>
+                            Your meeting activity increased by
+                            18.4% compared with the previous period.
+                        </p>
+
+                    </div>
+
+
+                    <div class="insight">
+
+                        <div class="insight-icon">
+
+                            <i class="fa-solid fa-bullseye"></i>
+
+                        </div>
+
+                        <h4>
+                            Strong Action Tracking
+                        </h4>
+
+                        <p>
+                            82% of identified action items are
+                            currently marked as completed.
+                        </p>
+
+                    </div>
+
+
+                    <div class="insight">
+
+                        <div class="insight-icon">
+
+                            <i class="fa-solid fa-bolt"></i>
+
+                        </div>
+
+                        <h4>
+                            AI Saves Processing Time
+                        </h4>
+
+                        <p>
+                            Automated transcription and summarization
+                            reduce manual documentation effort.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================
+                 RECENT ACTIVITY
+            ================================== -->
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            Recent Analytics Activity
+                        </h3>
+
+                        <p>
+                            Latest AI processing events
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="activity-list">
+
+
+                    <div class="activity-item">
+
+                        <div class="activity-icon">
+
+                            <i class="fa-solid fa-file-circle-check"></i>
+
+                        </div>
+
+                        <div class="activity-content">
+
+                            <strong>
+                                Meeting minutes generated
+                            </strong>
+
+                            <p>
+                                Final Year Project Review
+                                was successfully processed.
+                            </p>
+
+                        </div>
+
+                        <span class="activity-time">
+                            2h ago
+                        </span>
+
+                    </div>
+
+
+                    <div class="activity-item">
+
+                        <div class="activity-icon">
+
+                            <i class="fa-solid fa-list-check"></i>
+
+                        </div>
+
+                        <div class="activity-content">
+
+                            <strong>
+                                Action items detected
+                            </strong>
+
+                            <p>
+                                7 new action items were identified
+                                from the latest meeting.
+                            </p>
+
+                        </div>
+
+                        <span class="activity-time">
+                            5h ago
+                        </span>
+
+                    </div>
+
+
+                    <div class="activity-item">
+
+                        <div class="activity-icon">
+
+                            <i class="fa-solid fa-brain"></i>
+
+                        </div>
+
+                        <div class="activity-content">
+
+                            <strong>
+                                AI analysis completed
+                            </strong>
+
+                            <p>
+                                Meeting sentiment and key decisions
+                                were successfully analyzed.
+                            </p>
+
+                        </div>
+
+                        <span class="activity-time">
+                            Yesterday
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <footer class="footer">
+
+            © 2026 MeetMind AI ·
+            AI Meeting Minutes Generator ·
+            Final Year Project
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+
+<script>
+
+    /* =========================================
+       MEETING ACTIVITY CHART
+    ========================================= */
+
+    const meetingCtx =
+        document
+            .getElementById("meetingChart")
+            .getContext("2d");
+
+
+    new Chart(meetingCtx, {
+
+        type: "line",
+
+        data: {
+
+            labels: [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct"
+            ],
+
+            datasets: [
+
+                {
+                    label: "Meetings",
+
+                    data: [
+                        8,
+                        11,
+                        9,
+                        14,
+                        13,
+                        17,
+                        15,
+                        20,
+                        18,
+                        24
+                    ],
+
+                    borderColor: "#6366f1",
+
+                    backgroundColor:
+                        "rgba(99,102,241,0.10)",
+
+                    borderWidth: 3,
+
+                    fill: true,
+
+                    tension: 0.4,
+
+                    pointRadius: 3,
+
+                    pointBackgroundColor: "#6366f1"
+                },
+
+                {
+                    label: "Meeting Hours",
+
+                    data: [
+                        12,
+                        16,
+                        14,
+                        21,
+                        19,
+                        25,
+                        23,
+                        29,
+                        27,
+                        38
+                    ],
+
+                    borderColor: "#8b5cf6",
+
+                    backgroundColor:
+                        "rgba(139,92,246,0.05)",
+
+                    borderWidth: 2,
+
+                    fill: false,
+
+                    tension: 0.4,
+
+                    pointRadius: 3,
+
+                    pointBackgroundColor: "#8b5cf6"
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+
+                    position: "bottom",
+
+                    labels: {
+                        boxWidth: 10,
+                        font: {
+                            size: 10
+                        }
+                    }
+
+                }
+
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    grid: {
+                        color: "#f1f2f4"
+                    },
+
+                    ticks: {
+                        font: {
+                            size: 10
+                        }
+                    }
+
+                },
+
+                x: {
+
+                    grid: {
+                        display: false
+                    },
+
+                    ticks: {
+                        font: {
+                            size: 10
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+
+
+    /* =========================================
+       AI PROCESSING CHART
+    ========================================= */
+
+    const aiCtx =
+        document
+            .getElementById("aiChart")
+            .getContext("2d");
+
+
+    new Chart(aiCtx, {
+
+        type: "bar",
+
+        data: {
+
+            labels: [
+                "Transcription",
+                "Summary",
+                "Actions",
+                "Decisions"
+            ],
+
+            datasets: [
+
+                {
+                    label: "Success Rate",
+
+                    data: [
+                        96,
+                        92,
+                        89,
+                        86
+                    ],
+
+                    backgroundColor: [
+                        "#6366f1",
+                        "#8b5cf6",
+                        "#10b981",
+                        "#f59e0b"
+                    ],
+
+                    borderRadius: 7,
+
+                    borderSkipped: false
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: false
+                }
+
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    max: 100,
+
+                    grid: {
+                        color: "#f1f2f4"
+                    },
+
+                    ticks: {
+
+                        font: {
+                            size: 10
+                        },
+
+                        callback: function(value) {
+                            return value + "%";
+                        }
+
+                    }
+
+                },
+
+                x: {
+
+                    grid: {
+                        display: false
+                    },
+
+                    ticks: {
+                        font: {
+                            size: 10
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+
+
+    /* =========================================
+       MEETING TYPE DONUT
+    ========================================= */
+
+    const typeCtx =
+        document
+            .getElementById("typeChart")
+            .getContext("2d");
+
+
+    new Chart(typeCtx, {
+
+        type: "doughnut",
+
+        data: {
+
+            labels: [
+                "Project",
+                "Team",
+                "Client",
+                "Academic"
+            ],
+
+            datasets: [
+
+                {
+                    data: [
+                        42,
+                        28,
+                        18,
+                        12
+                    ],
+
+                    backgroundColor: [
+                        "#6366f1",
+                        "#8b5cf6",
+                        "#10b981",
+                        "#f59e0b"
+                    ],
+
+                    borderWidth: 0,
+
+                    hoverOffset: 6
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            cutout: "70%",
+
+            plugins: {
+
+                legend: {
+                    display: false
+                }
+
+            }
+
+        }
+
+    });
+
+
+
+    /* =========================================
+       PERIOD FILTER
+    ========================================= */
+
+    document
+        .getElementById("periodSelect")
+        .addEventListener(
+            "change",
+            function() {
+
+                console.log(
+                    "Selected period:",
+                    this.value
+                );
+
+                /*
+                    Later connect this with
+                    FastAPI analytics endpoint.
+
+                    Example:
+
+                    /api/analytics?period=month
+                */
+
+            }
+        );
+
+</script>
+
+
+</body>
+</html>
+```

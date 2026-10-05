@@ -1,0 +1,2397 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MeetMind AI | Meeting Minutes Generator</title>
+
+    <style>
+        /* =====================================================
+           GLOBAL
+        ===================================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #080b14;
+            --sidebar: #0d111c;
+            --card: #111725;
+            --card-light: #151c2c;
+            --border: rgba(255,255,255,0.08);
+            --text: #f5f7fb;
+            --muted: #8d98ad;
+            --primary: #7c5cff;
+            --primary-light: #9b83ff;
+            --cyan: #28d7ff;
+            --green: #32d583;
+            --orange: #ffad42;
+            --red: #ff5d73;
+        }
+        
+
+        body {
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at 20% 10%,
+                    rgba(124,92,255,0.12),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 90% 80%,
+                    rgba(40,215,255,0.07),
+                    transparent 30%
+                ),
+                var(--bg);
+
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #252d40;
+            border-radius: 10px;
+        }
+
+
+        /* =====================================================
+           APP
+        ===================================================== */
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
+        .sidebar {
+            width: 260px;
+            min-height: 100vh;
+            background: rgba(13,17,28,0.96);
+            border-right: 1px solid var(--border);
+            padding: 25px 18px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 5px 10px 28px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--cyan)
+                );
+
+            box-shadow:
+                0 8px 25px rgba(124,92,255,0.3);
+
+            font-size: 19px;
+        }
+
+        .logo h2 {
+            font-size: 19px;
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            display: block;
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+
+
+        /* Navigation */
+
+        .navigation {
+            flex: 1;
+        }
+
+        .nav-title {
+            font-size: 9px;
+            color: #5f6a80;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            padding: 18px 13px 9px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            text-decoration: none;
+            color: var(--muted);
+
+            padding: 12px 14px;
+            margin: 4px 0;
+
+            border-radius: 11px;
+
+            transition: 0.25s;
+            font-size: 13px;
+        }
+
+        .nav-link i {
+            width: 19px;
+            text-align: center;
+        }
+
+        .nav-link:hover {
+            background: rgba(124,92,255,0.09);
+            color: white;
+        }
+
+        .nav-link.active {
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(124,92,255,0.2),
+                    rgba(124,92,255,0.06)
+                );
+
+            color: white;
+
+            border: 1px solid rgba(124,92,255,0.18);
+        }
+
+        .nav-link.active i {
+            color: var(--primary-light);
+        }
+
+
+        /* AI Card */
+
+        .upgrade-card {
+            padding: 18px;
+            border-radius: 16px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(124,92,255,0.16),
+                    rgba(40,215,255,0.05)
+                );
+
+            border: 1px solid rgba(124,92,255,0.18);
+            margin-bottom: 18px;
+        }
+
+        .upgrade-icon {
+            width: 34px;
+            height: 34px;
+
+            border-radius: 10px;
+
+            background: rgba(124,92,255,0.2);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: var(--primary-light);
+            margin-bottom: 10px;
+        }
+
+        .upgrade-card h3 {
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .upgrade-card p {
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+
+        /* Profile */
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-top: 1px solid var(--border);
+            padding-top: 18px;
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: linear-gradient(
+                135deg,
+                #7c5cff,
+                #27c9ff
+            );
+
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-info strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .profile-info span {
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        .profile > i {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        .main {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            padding: 28px 38px;
+        }
+
+
+        /* Header */
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 27px;
+        }
+
+        .breadcrumb {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .topbar h1 {
+            font-size: 25px;
+            margin-top: 7px;
+            letter-spacing: -0.7px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon-button,
+        .help-button {
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.025);
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .icon-button {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .notification-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--red);
+            border-radius: 50%;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+        }
+
+        .help-button {
+            padding: 10px 13px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 11px;
+        }
+
+
+        /* =====================================================
+           HERO
+        ===================================================== */
+
+        .welcome-banner {
+            min-height: 245px;
+            border-radius: 22px;
+            padding: 32px;
+
+            background:
+                radial-gradient(
+                    circle at 75% 20%,
+                    rgba(124,92,255,0.22),
+                    transparent 28%
+                ),
+                linear-gradient(
+                    120deg,
+                    #151426,
+                    #111725 60%,
+                    #0e1824
+                );
+
+            border: 1px solid var(--border);
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            overflow: hidden;
+            position: relative;
+
+            margin-bottom: 20px;
+        }
+
+        .welcome-banner::before {
+            content: "";
+            position: absolute;
+
+            width: 260px;
+            height: 260px;
+
+            border: 1px solid rgba(124,92,255,0.12);
+            border-radius: 50%;
+
+            right: 100px;
+            top: -100px;
+        }
+
+        .welcome-content {
+            max-width: 650px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+
+            padding: 6px 10px;
+            border-radius: 20px;
+
+            background: rgba(124,92,255,0.1);
+            color: #b8a9ff;
+
+            font-size: 8px;
+            letter-spacing: 1px;
+            font-weight: 700;
+
+            border: 1px solid rgba(124,92,255,0.2);
+        }
+
+        .welcome-content h2 {
+            font-size: 34px;
+            line-height: 1.12;
+            margin: 14px 0 11px;
+            letter-spacing: -1.2px;
+        }
+
+        .welcome-content h2 span {
+            background:
+                linear-gradient(
+                    90deg,
+                    #9c87ff,
+                    #42d9ff
+                );
+                 -webkit-background-clip: text;
+background-clip: text;
+            color: transparent;
+        }
+
+        .welcome-content p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+            max-width: 570px;
+        }
+
+        .primary-button {
+            border: none;
+            margin-top: 20px;
+
+            padding: 12px 18px;
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    #6351e8
+                );
+
+            color: white;
+
+            font-weight: 600;
+            font-size: 11px;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 10px 25px rgba(124,92,255,0.25);
+
+            transition: 0.25s;
+        }
+
+        .primary-button:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 15px 35px rgba(124,92,255,0.35);
+        }
+
+        .primary-button i {
+            margin-right: 7px;
+        }
+
+
+        /* Hero illustration */
+
+        .banner-illustration {
+            width: 260px;
+            height: 200px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ai-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(124,92,255,0.3),
+                    rgba(124,92,255,0.03)
+                );
+
+            border: 1px solid rgba(124,92,255,0.25);
+
+            box-shadow:
+                0 0 60px rgba(124,92,255,0.15);
+
+            font-size: 35px;
+            color: #a18fff;
+
+            animation: pulse 3s infinite;
+        }
+
+        @keyframes pulse {
+            0%,100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.06);
+            }
+        }
+
+        .floating-card {
+            position: absolute;
+
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 9px 11px;
+
+            border-radius: 10px;
+
+            background: rgba(20,26,40,0.9);
+            border: 1px solid var(--border);
+
+            font-size: 9px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .floating-card i {
+            color: var(--green);
+        }
+
+        .card-one {
+            top: 12px;
+            right: 8px;
+        }
+
+        .card-two {
+            bottom: 20px;
+            left: 5px;
+        }
+
+
+        /* =====================================================
+           STATS
+        ===================================================== */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(17,23,37,0.8);
+            border: 1px solid var(--border);
+
+            border-radius: 15px;
+
+            padding: 18px;
+
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            transition: 0.25s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(124,92,255,0.25);
+        }
+
+        .stat-icon {
+            width: 43px;
+            height: 43px;
+
+            border-radius: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .purple {
+            background: rgba(124,92,255,0.12);
+            color: #9d8bff;
+        }
+
+        .blue {
+            background: rgba(40,215,255,0.1);
+            color: #3edcff;
+        }
+
+        .green {
+            background: rgba(50,213,131,0.1);
+            color: #42dd91;
+        }
+
+        .orange {
+            background: rgba(255,173,66,0.1);
+            color: #ffb557;
+        }
+
+        .stat-info span {
+            display: block;
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        .stat-info h3 {
+            font-size: 21px;
+            margin: 3px 0;
+        }
+
+        .stat-info small {
+            color: var(--green);
+            font-size: 8px;
+        }
+
+
+        /* =====================================================
+           CONTENT GRID
+        ===================================================== */
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1.45fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .upload-section,
+        .ai-features,
+        .recent-section {
+            background: rgba(17,23,37,0.75);
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            padding: 22px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 17px;
+        }
+
+        .section-heading h2 {
+            font-size: 15px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 9px;
+            margin-top: 4px;
+        }
+
+        .supported {
+            color: var(--green);
+            font-size: 9px;
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+
+        /* Upload */
+
+        .upload-box {
+            min-height: 210px;
+
+            border: 1.5px dashed rgba(124,92,255,0.35);
+            border-radius: 15px;
+
+            background:
+                radial-gradient(
+                    circle at center,
+                    rgba(124,92,255,0.05),
+                    transparent 60%
+                );
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+
+            cursor: pointer;
+
+            transition: 0.25s;
+        }
+
+        .upload-box:hover,
+        .upload-box.dragover {
+            border-color: var(--primary);
+            background: rgba(124,92,255,0.07);
+        }
+
+        .upload-icon {
+            width: 55px;
+            height: 55px;
+
+            border-radius: 15px;
+
+            background: rgba(124,92,255,0.12);
+
+            color: #a493ff;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 22px;
+
+            margin-bottom: 12px;
+        }
+
+        .upload-box h3 {
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .upload-box p {
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        .browse-button {
+            border: 1px solid rgba(124,92,255,0.3);
+
+            background: rgba(124,92,255,0.1);
+
+            color: #b8a9ff;
+
+            padding: 9px 14px;
+            border-radius: 8px;
+
+            margin-top: 12px;
+
+            cursor: pointer;
+
+            font-size: 10px;
+        }
+
+        .file-types {
+            color: #59647a;
+            font-size: 8px;
+            margin-top: 11px;
+        }
+
+
+        /* Selected file */
+
+        .selected-file {
+            display: none;
+
+            align-items: center;
+            gap: 12px;
+
+            margin-top: 12px;
+
+            padding: 11px;
+
+            border-radius: 11px;
+
+            background: rgba(255,255,255,0.025);
+            border: 1px solid var(--border);
+        }
+
+        .file-icon {
+            width: 38px;
+            height: 38px;
+
+            border-radius: 9px;
+
+            background: rgba(40,215,255,0.1);
+            color: var(--cyan);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-details strong {
+            display: block;
+            font-size: 10px;
+        }
+
+        .file-details span {
+            color: var(--muted);
+            font-size: 8px;
+        }
+
+        .progress {
+            width: 100%;
+            height: 4px;
+
+            background: #222a3b;
+
+            border-radius: 5px;
+
+            margin-top: 7px;
+
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--primary),
+                    var(--cyan)
+                );
+
+            transition: width 0.2s;
+        }
+
+        .remove-file {
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .process-button {
+            width: 100%;
+
+            border: none;
+
+            margin-top: 13px;
+
+            padding: 12px;
+
+            border-radius: 9px;
+
+            background: #272d3b;
+            color: #6d7689;
+
+            font-size: 10px;
+            font-weight: 600;
+
+            cursor: not-allowed;
+        }
+
+        .process-button.ready {
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    #6250df
+                );
+
+            color: white;
+
+            cursor: pointer;
+        }
+
+
+        /* =====================================================
+           AI FEATURES
+        ===================================================== */
+
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            padding: 12px;
+
+            border: 1px solid var(--border);
+            border-radius: 11px;
+
+            transition: 0.25s;
+        }
+
+        .feature:hover {
+            background: rgba(255,255,255,0.025);
+        }
+
+        .feature-icon {
+            width: 36px;
+            height: 36px;
+
+            border-radius: 9px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+        }
+
+        .feature h3 {
+            font-size: 10px;
+            margin-bottom: 3px;
+        }
+
+        .feature p {
+            color: var(--muted);
+            font-size: 8px;
+        }
+
+        .feature-check {
+            margin-left: auto;
+            color: var(--green);
+            font-size: 10px;
+        }
+
+
+        /* =====================================================
+           RECENT MEETINGS
+        ===================================================== */
+
+        .recent-section {
+            margin-bottom: 20px;
+        }
+
+        .view-button {
+            background: transparent;
+            border: none;
+            color: #a99aff;
+            font-size: 9px;
+            cursor: pointer;
+        }
+
+        .meeting-table {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-header,
+        .meeting-row {
+            display: grid;
+
+            grid-template-columns:
+                2fr
+                1fr
+                0.8fr
+                1fr
+                0.5fr;
+
+            align-items: center;
+            gap: 10px;
+            padding: 13px 15px;
+        }
+
+        .table-header {
+            background: rgba(255,255,255,0.02);
+            color: #59647a;
+            font-size: 8px;
+            letter-spacing: 0.8px;
+        }
+
+        .meeting-row {
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        .meeting-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .meeting-icon {
+            width: 32px;
+            height: 32px;
+
+            border-radius: 8px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .meeting-name strong {
+            display: block;
+            color: white;
+            font-size: 9px;
+            margin-bottom: 3px;
+        }
+
+        .meeting-name span {
+            font-size: 7px;
+            color: var(--muted);
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 8px;
+        }
+
+        .status.completed {
+            color: var(--green);
+        }
+
+        .status i {
+            font-size: 5px;
+        }
+
+        .action-button {
+            width: 27px;
+            height: 27px;
+
+            border-radius: 7px;
+
+            border: 1px solid var(--border);
+
+            background: transparent;
+
+            color: var(--muted);
+
+            cursor: pointer;
+        }
+
+        .action-button:hover {
+            color: white;
+            border-color: var(--primary);
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 8px 3px 20px;
+
+            color: #4f596d;
+            font-size: 8px;
+        }
+
+        footer div {
+            display: flex;
+            gap: 7px;
+            align-items: center;
+        }
+
+        footer i {
+            color: var(--red);
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media(max-width:1100px) {
+
+            .stats-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .banner-illustration {
+                display: none;
+            }
+        }
+
+
+        @media(max-width:800px) {
+
+            .sidebar {
+                width: 72px;
+                padding: 20px 10px;
+            }
+
+            .logo {
+                justify-content: center;
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .logo > div:last-child,
+            .nav-link span,
+            .nav-title,
+            .upgrade-card,
+            .profile-info,
+            .profile > i {
+                display: none;
+            }
+
+            .nav-link {
+                justify-content: center;
+            }
+
+            .profile {
+                justify-content: center;
+            }
+
+            .main {
+                margin-left: 72px;
+                width: calc(100% - 72px);
+                padding: 20px;
+            }
+
+            .welcome-content h2 {
+                font-size: 27px;
+            }
+
+            .table-header {
+                display: none;
+            }
+
+            .meeting-row {
+                grid-template-columns: 1fr auto;
+                gap: 12px;
+            }
+
+            .meeting-row > span {
+                display: none;
+            }
+
+            .meeting-row .action-button {
+                grid-column: 2;
+                grid-row: 1;
+            }
+        }
+
+
+        @media(max-width:550px) {
+
+            .main {
+                padding: 15px;
+            }
+
+            .topbar h1 {
+                font-size: 19px;
+            }
+
+            .help-button {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-banner {
+                padding: 22px;
+            }
+
+            .welcome-content h2 {
+                font-size: 24px;
+            }
+
+            .upload-section,
+            .ai-features,
+            .recent-section {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+<div class="app">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                🎙️
+            </div>
+
+            <div>
+                <h2>MeetMind</h2>
+                <span>AI Meeting Assistant</span>
+            </div>
+
+        </div>
+
+
+        <nav class="navigation">
+
+            <p class="nav-title">MAIN MENU</p>
+
+            <a href="#" class="nav-link active">
+                <span>▣</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="#uploadSection" class="nav-link">
+                <span>＋</span>
+                <span>New Meeting</span>
+            </a>
+
+            <a href="#" class="nav-link">
+                <span>◷</span>
+                <span>Meeting History</span>
+            </a>
+
+            <a href="#" class="nav-link">
+                <span>▥</span>
+                <span>Analytics</span>
+            </a>
+
+            <p class="nav-title">SYSTEM</p>
+
+            <a href="#" class="nav-link">
+                <span>⚙</span>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="upgrade-card">
+
+                <div class="upgrade-icon">
+                    ✨
+                </div>
+
+                <h3>AI Powered</h3>
+
+                <p>
+                    Turn your meetings into
+                    intelligent minutes.
+                </p>
+
+            </div>
+
+
+            <div class="profile">
+
+                <div class="profile-avatar">
+                    RV
+                </div>
+
+                <div class="profile-info">
+                    <strong>Ranjith</strong>
+                    <span>Project Admin</span>
+                </div>
+
+                <span>•••</span>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main">
+
+
+        <!-- HEADER -->
+
+        <header class="topbar">
+
+            <div>
+
+                <span class="breadcrumb">
+                    Workspace / Dashboard
+                </span>
+
+                <h1>
+                    Good Morning, Ranjith 👋
+                </h1>
+
+            </div>
+
+
+            <div class="top-actions">
+
+                <button class="icon-button">
+                    🔔
+                    <span class="notification-dot"></span>
+                </button>
+
+                <button class="help-button">
+                    ❔ Help
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- ================= HERO ================= -->
+
+        <section class="welcome-banner">
+
+            <div class="welcome-content">
+
+                <span class="badge">
+                    ✨ AI MEETING ASSISTANT
+                </span>
+
+                <h2>
+                    Transform meetings into
+                    <span>actionable insights.</span>
+                </h2>
+
+                <p>
+                    Upload your meeting recording and let AI
+                    automatically generate accurate transcripts,
+                    summaries, decisions and action items.
+                </p>
+
+                <button
+                    class="primary-button"
+                    onclick="scrollToUpload()"
+                >
+                    ＋ Create New Minutes
+                </button>
+
+            </div>
+
+
+            <div class="banner-illustration">
+
+                <div class="ai-circle">
+                    🎙️
+                </div>
+
+                <div class="floating-card card-one">
+                    ✓ Transcript Ready
+                </div>
+
+                <div class="floating-card card-two">
+                    ✓ Tasks Extracted
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= STATISTICS ================= -->
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+
+                <div class="stat-icon purple">
+                    🎥
+                </div>
+
+                <div class="stat-info">
+
+                    <span>Total Meetings</span>
+
+                    <h3>24</h3>
+
+                    <small>
+                        ↑ 12% this month
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon blue">
+                    ◷
+                </div>
+
+                <div class="stat-info">
+
+                    <span>Total Meeting Hours</span>
+
+                    <h3>18.6</h3>
+
+                    <small>
+                        ↑ 8% this month
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon green">
+                    ✓
+                </div>
+
+                <div class="stat-info">
+
+                    <span>Action Items</span>
+
+                    <h3>67</h3>
+
+                    <small>
+                        ↑ 18 completed
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon orange">
+                    📄
+                </div>
+
+                <div class="stat-info">
+
+                    <span>Minutes Generated</span>
+
+                    <h3>21</h3>
+
+                    <small>
+                        ✓ 100% processed
+                    </small>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= UPLOAD + AI ================= -->
+
+        <section class="content-grid">
+
+
+            <!-- UPLOAD -->
+
+            <div
+                class="upload-section"
+                id="uploadSection"
+            >
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <h2>
+                            Create Meeting Minutes
+                        </h2>
+
+                        <p>
+                            Upload your audio or video recording
+                        </p>
+
+                    </div>
+
+                    <span class="supported">
+                        ● AI Processing
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="upload-box"
+                    id="dropZone"
+                >
+
+                    <input
+                        type="file"
+                        id="meetingFile"
+                        accept=".mp3,.wav,.m4a,.mp4,.mov,.avi,.mkv,.webm"
+                        hidden
+                    >
+
+
+                    <div class="upload-icon">
+                        ☁
+                    </div>
+
+
+                    <h3>
+                        Drag & Drop your meeting file
+                    </h3>
+
+
+                    <p>
+                        or click below to browse from your computer
+                    </p>
+
+
+                    <button
+                        class="browse-button"
+                        onclick="openFilePicker(event)"
+                    >
+                        📁 Choose File
+                    </button>
+
+
+                    <div class="file-types">
+                        MP3 · WAV · M4A · MP4 · MOV · AVI · MKV · WEBM
+                    </div>
+
+                </div>
+
+
+                <!-- SELECTED FILE -->
+
+                <div
+                    class="selected-file"
+                    id="selectedFile"
+                >
+
+                    <div class="file-icon">
+                        🎵
+                    </div>
+
+
+                    <div class="file-details">
+
+                        <strong id="fileName">
+                            Meeting recording
+                        </strong>
+
+                        <span id="fileSize">
+                            0 MB
+                        </span>
+
+
+                        <div class="progress">
+
+                            <div
+                                class="progress-bar"
+                                id="progressBar"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        class="remove-file"
+                        onclick="removeFile()"
+                    >
+                        ✕
+                    </button>
+
+                </div>
+
+
+                <!-- PROCESS -->
+
+                <button
+                    class="process-button"
+                    id="processButton"
+                    disabled
+                >
+                    ✨ Generate AI Minutes
+                </button>
+
+            </div>
+
+
+            <!-- AI FEATURES -->
+
+            <div class="ai-features">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <h2>
+                            AI Capabilities
+                        </h2>
+
+                        <p>
+                            What MeetMind can generate
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="feature-list">
+
+
+                    <div class="feature">
+
+                        <div class="feature-icon purple">
+                            📝
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Smart Transcription
+                            </h3>
+
+                            <p>
+                                Convert speech into accurate text.
+                            </p>
+
+                        </div>
+
+                        <span class="feature-check">
+                            ✓
+                        </span>
+
+                    </div>
+
+
+                    <div class="feature">
+
+                        <div class="feature-icon blue">
+                            🧠
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                AI Summary
+                            </h3>
+
+                            <p>
+                                Generate concise meeting summaries.
+                            </p>
+
+                        </div>
+
+                        <span class="feature-check">
+                            ✓
+                        </span>
+
+                    </div>
+
+
+                    <div class="feature">
+
+                        <div class="feature-icon green">
+                            ☑
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Action Intelligence
+                            </h3>
+
+                            <p>
+                                Detect tasks, owners and deadlines.
+                            </p>
+
+                        </div>
+
+                        <span class="feature-check">
+                            ✓
+                        </span>
+
+                    </div>
+
+
+                    <div class="feature">
+
+                        <div class="feature-icon orange">
+                            ⚖
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Decision Detection
+                            </h3>
+
+                            <p>
+                                Identify important decisions.
+                            </p>
+
+                        </div>
+
+                        <span class="feature-check">
+                            ✓
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= RECENT MEETINGS ================= -->
+
+        <section class="recent-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        Recent Meetings
+                    </h2>
+
+                    <p>
+                        Your latest AI-generated meeting minutes
+                    </p>
+
+                </div>
+
+
+                <button class="view-button">
+                    View All →
+                </button>
+
+            </div>
+
+
+            <div class="meeting-table">
+
+
+                <div class="table-header">
+
+                    <span>MEETING</span>
+                    <span>DATE</span>
+                    <span>DURATION</span>
+                    <span>STATUS</span>
+                    <span>ACTION</span>
+
+                </div>
+
+
+                <div class="meeting-row">
+
+                    <div class="meeting-name">
+
+                        <div class="meeting-icon purple">
+                            🎙
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Project Development Meeting
+                            </strong>
+
+                            <span>
+                                5 participants
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <span>
+                        05 Oct 2026
+                    </span>
+
+                    <span>
+                        42 min
+                    </span>
+
+                    <span class="status completed">
+                        ● Completed
+                    </span>
+
+                    <button class="action-button">
+                        ↗
+                    </button>
+
+                </div>
+
+
+                <div class="meeting-row">
+
+                    <div class="meeting-name">
+
+                        <div class="meeting-icon blue">
+                            👥
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Team Planning Meeting
+                            </strong>
+
+                            <span>
+                                4 participants
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <span>
+                        03 Oct 2026
+                    </span>
+
+                    <span>
+                        31 min
+                    </span>
+
+                    <span class="status completed">
+                        ● Completed
+                    </span>
+
+                    <button class="action-button">
+                        ↗
+                    </button>
+
+                </div>
+
+
+                <div class="meeting-row">
+
+                    <div class="meeting-name">
+
+                        <div class="meeting-icon green">
+                            💻
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Technical Review
+                            </strong>
+
+                            <span>
+                                6 participants
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <span>
+                        01 Oct 2026
+                    </span>
+
+                    <span>
+                        56 min
+                    </span>
+
+                    <span class="status completed">
+                        ● Completed
+                    </span>
+
+                    <button class="action-button">
+                        ↗
+                    </button>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- FOOTER -->
+
+        <footer>
+
+            <p>
+                © 2026 MeetMind AI · AI Meeting Minutes Generator
+            </p>
+
+            <div>
+                <span>Powered by AI</span>
+                <span>♥</span>
+            </div>
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+    const dropZone =
+        document.getElementById("dropZone");
+
+    const fileInput =
+        document.getElementById("meetingFile");
+
+    const selectedFile =
+        document.getElementById("selectedFile");
+
+    const fileName =
+        document.getElementById("fileName");
+
+    const fileSize =
+        document.getElementById("fileSize");
+
+    const progressBar =
+        document.getElementById("progressBar");
+
+    const processButton =
+        document.getElementById("processButton");
+
+
+    /* =====================================================
+       OPEN FILE PICKER
+    ===================================================== */
+
+    function openFilePicker(event) {
+
+        event.stopPropagation();
+
+        fileInput.click();
+
+    }
+
+
+    /* =====================================================
+       FILE INPUT
+    ===================================================== */
+
+    fileInput.addEventListener(
+        "change",
+        function () {
+
+            if (this.files.length > 0) {
+
+                handleFile(this.files[0]);
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       DRAG AND DROP
+    ===================================================== */
+
+    dropZone.addEventListener(
+        "dragover",
+        function (event) {
+
+            event.preventDefault();
+
+            dropZone.classList.add("dragover");
+
+        }
+    );
+
+
+    dropZone.addEventListener(
+        "dragleave",
+        function () {
+
+            dropZone.classList.remove("dragover");
+
+        }
+    );
+
+
+    dropZone.addEventListener(
+        "drop",
+        function (event) {
+
+            event.preventDefault();
+
+            dropZone.classList.remove("dragover");
+
+            const files =
+                event.dataTransfer.files;
+
+            if (files.length > 0) {
+
+                handleFile(files[0]);
+
+            }
+
+        }
+    );
+
+
+    dropZone.addEventListener(
+        "click",
+        function () {
+
+            fileInput.click();
+
+        }
+    );
+
+
+    /* =====================================================
+       HANDLE FILE
+    ===================================================== */
+
+    function handleFile(file) {
+
+        const allowedTypes = [
+            "audio/mpeg",
+            "audio/wav",
+            "audio/x-wav",
+            "audio/mp4",
+            "audio/x-m4a",
+            "video/mp4",
+            "video/quicktime",
+            "video/x-msvideo",
+            "video/webm",
+            "video/x-matroska"
+        ];
+
+
+        const extension =
+            file.name
+            .split(".")
+            .pop()
+            .toLowerCase();
+
+
+        const allowedExtensions = [
+            "mp3",
+            "wav",
+            "m4a",
+            "mp4",
+            "mov",
+            "avi",
+            "mkv",
+            "webm"
+        ];
+
+
+        if (
+            !allowedTypes.includes(file.type) &&
+            !allowedExtensions.includes(extension)
+        ) {
+
+            alert(
+                "Please select a supported audio or video file."
+            );
+
+            return;
+
+        }
+
+
+        fileName.textContent =
+            file.name;
+
+        fileSize.textContent =
+            formatFileSize(file.size);
+
+
+        selectedFile.style.display =
+            "flex";
+
+
+        processButton.disabled =
+            false;
+
+        processButton.classList.add(
+            "ready"
+        );
+
+
+        simulateUpload();
+
+    }
+
+
+    /* =====================================================
+       FILE SIZE
+    ===================================================== */
+
+    function formatFileSize(bytes) {
+
+        if (bytes === 0) {
+            return "0 Bytes";
+        }
+
+        const units = [
+            "Bytes",
+            "KB",
+            "MB",
+            "GB"
+        ];
+
+        const index =
+            Math.floor(
+                Math.log(bytes) /
+                Math.log(1024)
+            );
+
+        return (
+            parseFloat(
+                (
+                    bytes /
+                    Math.pow(1024, index)
+                ).toFixed(2)
+            ) +
+            " " +
+            units[index]
+        );
+
+    }
+
+
+    /* =====================================================
+       SIMULATED UPLOAD PROGRESS
+    ===================================================== */
+
+    function simulateUpload() {
+
+        let progress = 0;
+
+        progressBar.style.width =
+            "0%";
+
+
+        const interval =
+            setInterval(
+                function () {
+
+                    progress +=
+                        Math.floor(
+                            Math.random() * 12
+                        ) + 5;
+
+
+                    if (progress >= 100) {
+
+                        progress = 100;
+
+                        clearInterval(interval);
+
+                    }
+
+
+                    progressBar.style.width =
+                        progress + "%";
+
+                },
+                100
+            );
+
+    }
+
+
+    /* =====================================================
+       REMOVE FILE
+    ===================================================== */
+
+    function removeFile() {
+
+        fileInput.value = "";
+
+        selectedFile.style.display =
+            "none";
+
+        processButton.disabled =
+            true;
+
+        processButton.classList.remove(
+            "ready"
+        );
+
+        progressBar.style.width =
+            "0%";
+
+    }
+
+
+    /* =====================================================
+       SCROLL TO UPLOAD
+    ===================================================== */
+
+    function scrollToUpload() {
+
+        document
+            .getElementById("uploadSection")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+    }
+
+
+    /* =====================================================
+       PROCESS BUTTON
+    ===================================================== */
+
+    processButton.addEventListener(
+        "click",
+        function () {
+
+            if (!fileInput.files.length) {
+
+                alert(
+                    "Please select a meeting recording first."
+                );
+
+                return;
+
+            }
+
+
+            processButton.innerHTML =
+                "⏳ Processing Meeting...";
+
+            processButton.disabled =
+                true;
+
+
+            /*
+                Backend API will be connected here.
+
+                Example:
+
+                const formData = new FormData();
+
+                formData.append(
+                    "file",
+                    fileInput.files[0]
+                );
+
+                fetch(
+                    "http://127.0.0.1:8000/process-meeting",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+            */
+
+
+            setTimeout(
+                function () {
+
+                    processButton.innerHTML =
+                        "✓ AI Processing Started";
+
+                    alert(
+                        "Meeting uploaded successfully! AI processing will be connected to the FastAPI backend in the next step."
+                    );
+
+
+                    setTimeout(
+                        function () {
+
+                            processButton.innerHTML =
+                                "✨ Generate AI Minutes";
+
+                            processButton.disabled =
+                                false;
+
+                        },
+                        1500
+                    );
+
+                },
+                1200
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       SIDEBAR NAVIGATION
+    ===================================================== */
+
+    document
+        .querySelectorAll(".nav-link")
+        .forEach(
+            function (link) {
+
+                link.addEventListener(
+                    "click",
+                    function () {
+
+                        document
+                            .querySelectorAll(".nav-link")
+                            .forEach(
+                                function (item) {
+
+                                    item.classList.remove(
+                                        "active"
+                                    );
+
+                                }
+                            );
+
+
+                        this.classList.add(
+                            "active"
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+</script>
+
+</body>
+</html>
+```
